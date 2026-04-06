@@ -1,0 +1,169 @@
+/* Luxury theme overrides (loaded only when activeTheme is luxury) */
+.invitation-theme[data-theme="luxury"] {
+  --theme-font-display: "Cormorant Garamond", Georgia, serif;
+  --theme-font-script: "Cormorant Garamond", Georgia, serif;
+  --theme-section-py: 6rem;
+  --theme-card-radius: 0.5rem;
+  --theme-button-radius: 0.5rem;
+  --theme-card-border-width: 1.5px;
+  --theme-overlay-start: rgba(0, 0, 0, 0.45);
+  --theme-overlay-end: rgba(0, 0, 0, 0.72);
+  --theme-closing-top: #2b1f0a;
+  --theme-closing-bottom: #140f05;
+  --theme-motion-duration: 0.45s;
+  --theme-text-strong: #a16207;
+  --theme-text-main: #b45309;
+  --theme-text-soft: #ca8a04;
+  --theme-text-muted: #eab308;
+  --theme-bg-top: #080808;
+  --theme-bg-mid: #131008;
+  --theme-bg-bottom: #1c160a;
+  --theme-section-a: #0d0d0d;
+  --theme-section-b: #1b140a;
+  --theme-section-c: #140f07;
+  --theme-section-d: #1f180b;
+  --theme-section-e: #2b210f;
+  --theme-accent: #ca8a04;
+  --theme-accent-strong: #a16207;
+  --theme-accent-soft: #fde68a;
+  --theme-card-border: #8f5b13;
+  --theme-card-bg: #121212;
+  --theme-card-shadow: rgba(202, 138, 4, 0.22);
+}
+
+.invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="event_details"] .card-romantic,
+.invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="event_details"][data-section-variant="cards-luxury"] .card-romantic {
+  border-color: #a16207;
+  background: linear-gradient(180deg, #1f1a12 0%, #141414 100%);
+}
+
+.invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="gallery"] .gallery-masonry {
+  columns: 4;
+  column-gap: 1rem;
+}
+
+.invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="gallery"] .gallery-masonry img,
+.invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="gallery"] .gallery-masonry video,
+.invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="gallery"] .gallery-masonry iframe {
+  border-color: #a16207;
+  background: #111111;
+}
+
+.invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="bride_groom"][data-section-variant="editorial-portrait"] .bride-groom-section {
+  background: #000;
+}
+
+.invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="bride_groom"][data-section-variant="editorial-portrait"] .bride-groom-header {
+  max-width: 72rem;
+  margin-bottom: 2rem;
+}
+
+.invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="bride_groom"][data-section-variant="editorial-portrait"] .bride-groom-grid {
+  max-width: 72rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+.invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="bride_groom"][data-section-variant="editorial-portrait"] .bride-groom-card {
+  position: relative;
+  background: #000;
+  color: #f7f2e8;
+  border: 1px solid #222;
+  display: grid;
+  grid-template-columns: 7.5rem 1fr;
+  align-items: stretch;
+  text-align: left;
+  overflow: hidden;
+}
+
+.invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="bride_groom"][data-section-variant="editorial-portrait"] .luxury-role-tag {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #0b0b0b;
+  background: #efefef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 0.5rem;
+  border-right: 1px solid #d1d5db;
+}
+
+.invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="bride_groom"][data-section-variant="editorial-portrait"] .portrait-shell {
+  margin: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="bride_groom"][data-section-variant="editorial-portrait"] .portrait-frame {
+  width: 100%;
+  height: 30rem;
+  border-radius: 0;
+  border: 0;
+  box-shadow: none;
+}
+
+.invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="bride_groom"][data-section-variant="editorial-portrait"] .portrait-frame img {
+  object-position: center top;
+}
+
+.invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="bride_groom"][data-section-variant="editorial-portrait"] .portrait-shell > .absolute {
+  display: none;
+}
+
+.invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="bride_groom"][data-section-variant="editorial-portrait"] .profile-copy {
+  grid-column: 1 / -1;
+  padding: 1rem 1.25rem 1.4rem;
+  border-top: 1px solid rgba(202, 138, 4, 0.28);
+  text-align: right;
+}
+
+.invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="bride_groom"][data-section-variant="editorial-portrait"] .profile-copy h3 {
+  color: #f8e8be !important;
+  font-size: clamp(2rem, 3.2vw, 3rem);
+  line-height: 1;
+}
+
+.invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="bride_groom"][data-section-variant="editorial-portrait"] .profile-copy p,
+.invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="bride_groom"][data-section-variant="editorial-portrait"] .profile-copy a {
+  color: #e5e7eb !important;
+}
+
+.invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="bride_groom"][data-section-variant="editorial-portrait"] .bride-groom-grid > .hidden.md\:flex {
+  display: none !important;
+}
+
+@media (min-width: 900px) {
+  .invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="bride_groom"][data-section-variant="editorial-portrait"] .bride-groom-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+  }
+
+  .invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="bride_groom"][data-section-variant="editorial-portrait"] .portrait-frame {
+    height: 34rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="gallery"] .gallery-masonry {
+    columns: 2;
+  }
+
+  .invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="bride_groom"][data-section-variant="editorial-portrait"] .bride-groom-card {
+    grid-template-columns: 5.25rem 1fr;
+  }
+
+  .invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="bride_groom"][data-section-variant="editorial-portrait"] .luxury-role-tag {
+    font-size: 1.5rem;
+  }
+
+  .invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="bride_groom"][data-section-variant="editorial-portrait"] .portrait-frame {
+    height: 22rem;
+  }
+}

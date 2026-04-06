@@ -1,0 +1,214 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String       @id @default(cuid())
+  name        String
+  email       String       @unique
+  password    String
+  plan        String       @default("free") // free, pro
+  role        String       @default("user") // user, admin
+  avatar      String?
+  phone       String?
+  address     String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  invitations Invitation[]
+
+  @@map("users")
+}
+
+model Invitation {
+  id           String      @id @default(cuid())
+  userId       String
+  slug         String      @unique
+  brideName    String
+  groomName    String
+  weddingDate  DateTime
+  coverPhoto   String?
+  musicUrl     String?
+  theme        String      @default("romantic_classic")
+  isPublished  Boolean     @default(false)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sections     Section[]
+  events       Event[]
+  gallery      Gallery[]
+  guests       Guest[]
+  rsvps        Rsvp[]
+  wishes       Wish[]
+  bankAccounts BankAccount[]
+  analytics    Analytics[]
+  loveStories  LoveStory[]
+  brideProfile BrideGroomProfile? @relation("BrideProfile", fields: [brideProfileId], references: [id])
+  brideProfileId String? @unique
+  groomProfile BrideGroomProfile? @relation("GroomProfile", fields: [groomProfileId], references: [id])
+  groomProfileId String? @unique
+
+  @@map("invitations")
+}
+
+model BrideGroomProfile {
+  id          String  @id @default(cuid())
+  name        String
+  photo       String?
+  fatherName  String?
+  motherName  String?
+  instagram   String?
+  bio         String?
+  role        String  // bride | groom
+  invitationAsBride Invitation? @relation("BrideProfile")
+  invitationAsGroom Invitation? @relation("GroomProfile")
+
+  @@map("bride_groom_profiles")
+}
+
+model Section {
+  id           String     @id @default(cuid())
+  invitationId String
+  type         String     // cover, bride_groom, countdown, event_details, love_story, gallery, rsvp, guest_wishes, digital_gift, live_stream, closing, custom
+  title        String
+  enabled      Boolean    @default(true)
+  displayOrder Int        @default(0)
+  settingsJson String?    @default("{}")
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  invitation   Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+
+  @@map("sections")
+}
+
+model Event {
+  id           String     @id @default(cuid())
+  invitationId String
+  title        String
+  date         DateTime
+  time         String
+  venue        String
+  address      String
+  mapsLink     String?
+  type         String     @default("reception") // akad, reception, other
+  displayOrder Int        @default(0)
+  invitation   Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+
+  @@map("events")
+}
+
+model LoveStory {
+  id           String     @id @default(cuid())
+  invitationId String
+  year         String
+  title        String
+  description  String
+  photo        String?
+  displayOrder Int        @default(0)
+  invitation   Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+
+  @@map("love_stories")
+}
+
+model Gallery {
+  id           String     @id @default(cuid())
+  invitationId String
+  type         String     @default("image") // image, video, youtube
+  url          String
+  caption      String?
+  driveFileId  String?    // Google Drive file ID if synced from Drive
+  driveWebViewLink String?
+  displayOrder Int        @default(0)
+  createdAt    DateTime   @default(now())
+  invitation   Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+
+  @@map("gallery")
+}
+
+model Guest {
+  id           String     @id @default(cuid())
+  invitationId String
+  name         String
+  phone        String?
+  qrCode       String?
+  checkedIn    Boolean    @default(false)
+  checkinTime  DateTime?
+  watsappSent  Boolean    @default(false)
+  createdAt    DateTime   @default(now())
+  invitation   Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+
+  @@map("guests")
+}
+
+model Rsvp {
+  id           String     @id @default(cuid())
+  invitationId String
+  guestName    String
+  phone        String?
+  attendance   String     // yes, no, maybe
+  guestCount   Int        @default(1)
+  message      String?
+  createdAt    DateTime   @default(now())
+  invitation   Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+
+  @@map("rsvps")
+}
+
+model Wish {
+  id           String     @id @default(cuid())
+  invitationId String
+  name         String
+  message      String
+  isApproved   Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  invitation   Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+
+  @@map("wishes")
+}
+
+model BankAccount {
+  id            String     @id @default(cuid())
+  invitationId  String
+  bankName      String
+  accountNumber String
+  accountHolder String
+  qrCode        String?
+  displayOrder  Int        @default(0)
+  invitation    Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+
+  @@map("bank_accounts")
+}
+
+model Analytics {
+  id           String     @id @default(cuid())
+  invitationId String
+  visitorIp    String?
+  userAgent    String?
+  guestName    String?
+  visitTime    DateTime   @default(now())
+  invitation   Invitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+
+  @@map("analytics")
+}
+
+model SectionTemplate {
+  id           String   @id @default(cuid())
+  type         String   @unique // cover, bride_groom, countdown, etc.
+  title        String           // Display name
+  icon         String   @default("📄")
+  description  String?
+  defaultEnabled Boolean @default(true)
+  displayOrder Int      @default(0)
+  isActive     Boolean  @default(true) // admin can deactivate
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("section_templates")
+}

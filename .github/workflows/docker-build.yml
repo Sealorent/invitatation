@@ -1,0 +1,50 @@
+name: Build and Deploy Vue Frontend
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+      # - putra/fix-missing-component
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Build Docker image
+        run: |
+          docker build -t vikylorent/invitation-wedding:latest \
+            -f deployment/Dockerfile \
+            --build-arg VITE_API_BASE_URL=https://api-saas.sealorent.site/api \
+            --build-arg VITE_APP_NAME="SaaS ePesantren" \
+            --build-arg VITE_APP_ENV=production \
+            .
+
+      - name: Tag Docker image with commit SHA
+        run: docker tag vikylorent/invitation-wedding:latest vikylorent/invitation-wedding:${{ github.sha }}
+
+      - name: Push Docker image (latest)
+        run: docker push vikylorent/invitation-wedding:latest
+
+      - name: Push Docker image (commit SHA)
+        run: docker push vikylorent/invitation-wedding:${{ github.sha }}
+
+      - name: Deploy to CapRover
+        run: |
+          # Install CapRover CLI
+          npm install -g caprover
+
+          # Deploy to CapRover
+          caprover deploy --caproverUrl https://captain.sealorent.site \
+            --caproverPassword "${{ secrets.CAPROVER_PASSWORD }}" \
+            --caproverApp app \
+            --imageName vikylorent/invitation-wedding:latest
