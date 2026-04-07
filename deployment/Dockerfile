@@ -5,6 +5,7 @@ WORKDIR /app
 
 # Install dependencies first for better layer caching.
 COPY package.json package-lock.json ./
+RUN apt-get update -y && apt-get install -y openssl
 RUN npm ci
 
 # Copy source and build Nuxt for production.
