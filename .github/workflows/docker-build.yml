@@ -24,8 +24,8 @@ jobs:
         run: |
           docker build -t vikylorent/invitation-wedding:latest \
             -f deployment/Dockerfile \
-            --build-arg VITE_API_BASE_URL=https://api-saas.sealorent.site/api \
-            --build-arg VITE_APP_NAME="SaaS ePesantren" \
+            --build-arg VITE_API_BASE_URL=https://invitation.sealorent.site/api \
+            --build-arg VITE_APP_NAME="Invitation" \
             --build-arg VITE_APP_ENV=production \
             .
 
@@ -39,12 +39,30 @@ jobs:
         run: docker push vikylorent/invitation-wedding:${{ github.sha }}
 
       - name: Deploy to CapRover
+        env:
+          CAPROVER_PASSWORD: ${{ secrets.CAPROVER_PASSWORD }}
+          CAPROVER_APP_NAME: ${{ secrets.CAPROVER_APP_NAME }}
         run: |
           # Install CapRover CLI
           npm install -g caprover
 
+          # Fail fast if the secret is missing to avoid interactive prompts
+          if [ -z "$CAPROVER_PASSWORD" ]; then
+            echo "CAPROVER_PASSWORD secret is not set"
+            exit 1
+          fi
+
+          if [ -z "$CAPROVER_APP_NAME" ]; then
+            echo "CAPROVER_APP_NAME secret is not set"
+            exit 1
+          fi
+
+          # Login explicitly to keep deployment non-interactive in CI
+          caprover login --caproverUrl https://captain.sealorent.site \
+            --caproverPassword "$CAPROVER_PASSWORD"
+
           # Deploy to CapRover
           caprover deploy --caproverUrl https://captain.sealorent.site \
-            --caproverPassword "${{ secrets.CAPROVER_PASSWORD }}" \
-            --caproverApp app \
+            --caproverPassword "$CAPROVER_PASSWORD" \
+            --appName "$CAPROVER_APP_NAME" \
             --imageName vikylorent/invitation-wedding:latest
