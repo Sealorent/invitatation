@@ -1,0 +1,9 @@
+/* Simple theme overrides (loaded when activeTheme is simple). */
+
+.invitation-theme[data-theme="simple"] {
+  --color-primary: #be123c;
+}
+
+.invitation-theme[data-theme="simple"] .theme-section {
+  border-radius: 0;
+}

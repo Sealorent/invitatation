@@ -74,6 +74,9 @@ export default defineEventHandler(async (event) => {
         data: loveStories.map((s: Record<string, unknown>, i: number) => ({
           ...s,
           invitationId: id,
+          year: s.year !== undefined && s.year !== null && String(s.year).trim() !== ''
+            ? String(s.year)
+            : new Date().getFullYear().toString(),
           displayOrder: i
         }))
       })

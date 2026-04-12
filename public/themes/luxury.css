@@ -1,40 +1,102 @@
 /* Luxury theme overrides (loaded only when activeTheme is luxury) */
 .invitation-theme[data-theme="luxury"] {
   --theme-font-display: "Cormorant Garamond", Georgia, serif;
+  --theme-font-body: "Inter", system-ui, sans-serif;
   --theme-font-script: "Cormorant Garamond", Georgia, serif;
   --theme-section-py: 6rem;
   --theme-card-radius: 0.5rem;
   --theme-button-radius: 0.5rem;
   --theme-card-border-width: 1.5px;
-  --theme-overlay-start: rgba(0, 0, 0, 0.45);
-  --theme-overlay-end: rgba(0, 0, 0, 0.72);
-  --theme-closing-top: #2b1f0a;
-  --theme-closing-bottom: #140f05;
+  --theme-overlay-start: rgba(43, 26, 5, 0.28);
+  --theme-overlay-end: rgba(43, 26, 5, 0.58);
+  --theme-closing-top: #f6edd8;
+  --theme-closing-bottom: #ead7ac;
   --theme-motion-duration: 0.45s;
-  --theme-text-strong: #a16207;
-  --theme-text-main: #b45309;
-  --theme-text-soft: #ca8a04;
-  --theme-text-muted: #eab308;
-  --theme-bg-top: #080808;
-  --theme-bg-mid: #131008;
-  --theme-bg-bottom: #1c160a;
-  --theme-section-a: #0d0d0d;
-  --theme-section-b: #1b140a;
-  --theme-section-c: #140f07;
-  --theme-section-d: #1f180b;
-  --theme-section-e: #2b210f;
-  --theme-accent: #ca8a04;
-  --theme-accent-strong: #a16207;
-  --theme-accent-soft: #fde68a;
-  --theme-card-border: #8f5b13;
-  --theme-card-bg: #121212;
-  --theme-card-shadow: rgba(202, 138, 4, 0.22);
+  --theme-text-strong: #6b3f05;
+  --theme-text-main: #7a4a08;
+  --theme-text-soft: #a46307;
+  --theme-text-muted: #b8800a;
+  --theme-bg-top: #f7efdc;
+  --theme-bg-mid: #f3e5c5;
+  --theme-bg-bottom: #ecdaad;
+  --theme-section-a: #fbf4e2;
+  --theme-section-b: #f4e4bf;
+  --theme-section-c: #f9f1dd;
+  --theme-section-d: #f0ddb2;
+  --theme-section-e: #ecd39d;
+  --theme-accent: #b97b11;
+  --theme-accent-strong: #8d5b07;
+  --theme-accent-soft: #f3ddb0;
+  --theme-card-border: #c7942f;
+  --theme-card-bg: #fffaf0;
+  --theme-card-shadow: rgba(145, 98, 18, 0.18);
+}
+
+/* Keep luxury typography consistent across all custom and wrapped sections. */
+.invitation-theme[data-theme="luxury"] .theme-section-wrap,
+.invitation-theme[data-theme="luxury"] .theme-section {
+  font-family: var(--theme-font-body);
+}
+
+.invitation-theme[data-theme="luxury"] .theme-section-wrap h1,
+.invitation-theme[data-theme="luxury"] .theme-section-wrap h2,
+.invitation-theme[data-theme="luxury"] .theme-section-wrap h3,
+.invitation-theme[data-theme="luxury"] .theme-section-wrap h4,
+.invitation-theme[data-theme="luxury"] .theme-section-wrap .font-serif,
+.invitation-theme[data-theme="luxury"] .theme-section-wrap .font-elegant {
+  font-family: var(--theme-font-display) !important;
+  letter-spacing: 0.01em;
+}
+
+.invitation-theme[data-theme="luxury"] .theme-section-wrap .font-script {
+  font-family: var(--theme-font-script) !important;
+}
+
+.invitation-theme[data-theme="luxury"] .theme-section-wrap p,
+.invitation-theme[data-theme="luxury"] .theme-section-wrap span,
+.invitation-theme[data-theme="luxury"] .theme-section-wrap li,
+.invitation-theme[data-theme="luxury"] .theme-section-wrap a,
+.invitation-theme[data-theme="luxury"] .theme-section-wrap button,
+.invitation-theme[data-theme="luxury"] .theme-section-wrap input,
+.invitation-theme[data-theme="luxury"] .theme-section-wrap textarea,
+.invitation-theme[data-theme="luxury"] .theme-section-wrap select,
+.invitation-theme[data-theme="luxury"] .theme-section-wrap label {
+  font-family: var(--theme-font-body);
+}
+
+.invitation-theme[data-theme="luxury"] {
+  background-color: #000;
+  background-image:
+    radial-gradient(circle at 20% 0%, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0) 45%),
+    radial-gradient(circle at 85% 100%, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0) 40%);
+}
+
+.invitation-theme[data-theme="luxury"] .card-romantic {
+  background: linear-gradient(180deg, #fffaf0 0%, #f8ecd2 100%);
+  border-color: #c7942f;
+  box-shadow: 0 16px 42px rgba(90, 52, 5, 0.14);
+}
+
+.invitation-theme[data-theme="luxury"] .btn-primary {
+  background: linear-gradient(135deg, #d5a744 0%, #aa6c07 100%);
+  border-color: #8d5b07;
+  color: #fff7e1;
+}
+
+.invitation-theme[data-theme="luxury"] .btn-outline {
+  border-color: #b78320;
+  color: #7a4a08;
+  background: rgba(255, 248, 230, 0.85);
+}
+
+.invitation-theme[data-theme="luxury"] .btn-outline:hover {
+  background: #f3ddb0;
 }
 
 .invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="event_details"] .card-romantic,
 .invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="event_details"][data-section-variant="cards-luxury"] .card-romantic {
-  border-color: #a16207;
-  background: linear-gradient(180deg, #1f1a12 0%, #141414 100%);
+  border-color: #b78320;
+  background: linear-gradient(180deg, #fff7e8 0%, #f3e2bc 100%);
 }
 
 .invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="gallery"] .gallery-masonry {
@@ -45,8 +107,8 @@
 .invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="gallery"] .gallery-masonry img,
 .invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="gallery"] .gallery-masonry video,
 .invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="gallery"] .gallery-masonry iframe {
-  border-color: #a16207;
-  background: #111111;
+  border-color: #b78320;
+  background: #fbf4e3;
 }
 
 .invitation-theme[data-theme="luxury"] .theme-section-wrap[data-section-type="bride_groom"][data-section-variant="editorial-portrait"] .bride-groom-section {

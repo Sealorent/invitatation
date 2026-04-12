@@ -1,6 +1,22 @@
 import { prisma } from '~/server/utils/prisma'
 import { requireAuth } from '~/server/utils/auth'
 
+function parseLoveStoryPhotos(story: Record<string, any>) {
+  let photos: string[] = []
+
+  try {
+    photos = story.photosJson ? JSON.parse(story.photosJson) : []
+  } catch {
+    photos = []
+  }
+
+  return {
+    ...story,
+    photos,
+    photo: story.photo || photos[0] || ''
+  }
+}
+
 export default defineEventHandler(async (event) => {
   const { userId } = requireAuth(event)
   const id = getRouterParam(event, 'id')!
@@ -23,5 +39,10 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, message: 'Invitation not found' })
   }
 
-  return invitation
+  return {
+    ...invitation,
+    loveStories: Array.isArray(invitation.loveStories)
+      ? invitation.loveStories.map(parseLoveStoryPhotos)
+      : []
+  }
 })

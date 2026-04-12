@@ -65,6 +65,9 @@
             <button @click="copyLink(inv.slug)" class="btn-outline text-xs px-4 py-2">
               {{ copied === inv.slug ? '✅' : '🔗' }}
             </button>
+            <button @click="copyInvitation(inv.id)" :disabled="copying === inv.id" class="btn-outline text-xs px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed">
+              {{ copying === inv.id ? '⏳' : '📋' }} Copy
+            </button>
             <button @click="deleteInvitation(inv.id)" class="text-red-400 hover:text-red-600 text-xs px-2 py-2 rounded-lg hover:bg-red-50 transition-colors">
               🗑️
             </button>
@@ -81,6 +84,7 @@ definePageMeta({ layout: 'dashboard' })
 const loading = ref(true)
 const invitations = ref<any[]>([])
 const copied = ref('')
+const copying = ref<string | null>(null)
 
 function formatDate(d: string) {
   return new Date(d).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
@@ -90,6 +94,18 @@ async function copyLink(slug: string) {
   await navigator.clipboard.writeText(`${window.location.origin}/${slug}`).catch(() => {})
   copied.value = slug
   setTimeout(() => { copied.value = '' }, 2000)
+}
+
+async function copyInvitation(id: string) {
+  copying.value = id
+  try {
+    const duplicate = await $fetch(`/api/invitations/${id}/copy`, { method: 'POST' })
+    invitations.value.unshift(duplicate)
+    copying.value = null
+  } catch (e) {
+    console.error('Copy failed:', e)
+    copying.value = null
+  }
 }
 
 async function deleteInvitation(id: string) {

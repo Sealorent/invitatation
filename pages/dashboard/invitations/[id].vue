@@ -59,6 +59,7 @@
               <option value="minimal">⬜ Minimal</option>
               <option value="luxury">✨ Luxury Gold</option>
               <option value="floral">🌸 Floral</option>
+              <option value="simple">🧩 Simple Full Section</option>
             </select>
           </div>
           <div>
@@ -145,7 +146,21 @@
         <h3 class="font-serif text-lg text-rose-700">Manage Sections</h3>
         <p class="text-sm text-gray-500">Enable or disable sections and drag to reorder how they appear on your invitation.</p>
 
+        <div class="flex items-center gap-4">
+          <button @click="saveSections" :disabled="savingSections" class="btn-primary text-sm">
+            {{ savingSections ? 'Saving...' : '💾 Save Section Order & Settings' }}
+          </button>
+          <button @click="generateSections" :disabled="generatingSections" class="btn-outline text-sm">
+            {{ generatingSections ? '⏳ Regenerating...' : '🔄 Regenerate from Template' }}
+          </button>
+        </div>
+        <p v-if="sectionsSaved" class="text-green-600 text-sm">✅ Sections updated!</p>
+        
         <div class="space-y-2">
+           <div v-if="!invSections.length" class="text-center py-12">
+             <div class="text-5xl mb-3">🧩</div>
+             <p class="text-gray-500 mb-4">No sections found. Generate them from the template.</p>
+           </div>
           <div
             v-for="(sec, i) in invSections"
             :key="sec.id"
@@ -210,10 +225,6 @@
           </div>
         </div>
 
-        <button @click="saveSections" :disabled="savingSections" class="btn-primary text-sm">
-          {{ savingSections ? 'Saving...' : '💾 Save Section Order' }}
-        </button>
-        <p v-if="sectionsSaved" class="text-green-600 text-sm">✅ Sections updated!</p>
       </div>
 
       <!-- TAB: Gallery -->
@@ -279,6 +290,121 @@
               <button @click="changeGalleryPage(galleryPage + 1)" :disabled="galleryPage === galleryTotalPages" class="btn-outline text-xs px-3 py-1">Next →</button>
             </div>
           </template>
+        </div>
+      </div>
+
+      <!-- TAB: Love Stories -->
+      <div v-if="activeTab === 'love-stories'" class="space-y-4">
+        <!-- Add/Edit Love Story Form -->
+        <div class="dashboard-card">
+          <h3 class="font-serif text-lg text-rose-700 mb-4">
+            {{ editingStory ? '✏️ Edit Love Story' : '➕ New Love Story' }}
+          </h3>
+
+          <!-- Title -->
+          <div class="mb-4">
+            <label class="form-label">Title</label>
+            <input v-model="newStory.title" class="form-input" placeholder="e.g., Our First Meeting" />
+          </div>
+
+          <!-- Year -->
+          <div class="mb-4">
+            <label class="form-label">Year (optional)</label>
+            <input v-model="newStory.year" class="form-input" type="number" :placeholder="new Date().getFullYear().toString()" />
+          </div>
+
+          <!-- Subtitle with Quill -->
+          <div class="mb-4">
+            <label class="form-label">Story (Rich Text)</label>
+            <ClientOnly>
+              <template #default>
+                <QuillInput v-model="newStory.subtitle" :placeholder="`Tell your love story...`" />
+              </template>
+              <template #fallback>
+                <textarea
+                  v-model="newStory.subtitle"
+                  rows="4"
+                  class="form-input"
+                  placeholder="Loading rich text editor..."
+                />
+              </template>
+            </ClientOnly>
+          </div>
+
+          <!-- Photos Section -->
+          <div class="mb-4">
+            <label class="form-label">Photos</label>
+            <div class="flex gap-2 mb-3">
+              <input 
+                v-model="storyPhotoInput"
+                type="text" 
+                class="form-input flex-1" 
+                placeholder="Photo URL"
+              />
+              <button 
+                @click="addStoryPhotoFromInput"
+                class="btn-primary text-sm"
+              >
+                Add Photo
+              </button>
+            </div>
+
+            <!-- Display added photos -->
+            <div v-if="newStory.photos.length" class="grid grid-cols-3 md:grid-cols-6 gap-3">
+              <div v-for="(photo, idx) in newStory.photos" :key="idx" class="relative group">
+                <img :src="photo" :alt="`Photo ${idx + 1}`" class="w-full h-24 object-cover rounded-lg border border-rose-100" />
+                <button
+                  @click="newStory.photos.splice(idx, 1)"
+                  class="absolute top-1 right-1 opacity-0 group-hover:opacity-100 w-6 h-6 rounded-full bg-red-500 text-white text-xs flex items-center justify-center transition-opacity"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+            <p v-else class="text-xs text-gray-400 italic">No photos added yet</p>
+          </div>
+
+          <!-- Save Button -->
+          <div class="flex gap-3">
+            <button @click="saveStory" :disabled="savingStory || !newStory.title" class="btn-primary text-sm">
+              {{ savingStory ? 'Saving...' : editingStory ? 'Update Story' : 'Add Story' }}
+            </button>
+            <button v-if="editingStory" @click="resetStoryForm" class="btn-outline text-sm">Cancel</button>
+          </div>
+        </div>
+
+        <!-- List of Love Stories -->
+        <div class="dashboard-card">
+          <h3 class="font-serif text-lg text-rose-700 mb-4">Love Stories ({{ loveStories.length }})</h3>
+          
+          <div v-if="!loveStories.length" class="text-center text-gray-400 py-8 text-sm">
+            No love stories yet. Create one above!
+          </div>
+
+          <div v-else class="space-y-4">
+            <div v-for="story in loveStories" :key="story.id" class="border border-rose-100 rounded-lg p-4 hover:bg-rose-50 transition-colors">
+              <div class="flex items-start justify-between mb-3">
+                <div class="flex-1">
+                  <div class="flex items-center gap-2 mb-1">
+                    <h4 class="font-serif text-lg text-rose-700">{{ story.title }}</h4>
+                    <span v-if="story.year" class="text-sm text-gray-500">({{ story.year }})</span>
+                  </div>
+                  <p v-if="story.subtitle" class="text-sm text-gray-600 line-clamp-2" v-html="story.subtitle" />
+                </div>
+                <div class="flex gap-2 ml-4">
+                  <button @click="editStory(story)" class="btn-outline text-xs px-3 py-1">Edit</button>
+                  <button @click="deleteStory(story.id)" class="px-3 py-1 text-xs rounded-lg bg-red-100 text-red-600 hover:bg-red-200 transition-colors">Delete</button>
+                </div>
+              </div>
+
+              <!-- Story Photos Preview -->
+              <div v-if="story.photos?.length" class="flex gap-2 flex-wrap mt-3">
+                <div v-for="(photo, idx) in story.photos" :key="idx" class="w-16 h-16 rounded-lg overflow-hidden border border-rose-100">
+                  <img :src="photo" :alt="`Photo ${Number(idx) + 1}`" class="w-full h-full object-cover" />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -402,9 +528,10 @@ const tabs = [
   { id: 'general', label: 'General', icon: '📝' },
   { id: 'sections', label: 'Sections', icon: '🧩' },
   { id: 'gallery', label: 'Gallery', icon: '🖼️' },
+  { id: 'love-stories', label: 'Love Stories', icon: '💕' },
   { id: 'guests', label: 'Guests', icon: '👥' },
   { id: 'rsvp', label: 'RSVP', icon: '✅' },
-  { id: 'wishes', label: 'Wishes', icon: '📌' },
+  { id: 'wishes', label: 'Wishes', icon: '�' },
   { id: 'whatsapp', label: 'WhatsApp', icon: '📱' },
 ]
 
@@ -419,6 +546,7 @@ const bankAccounts = ref<any[]>([])
 const invSections = ref<any[]>([])
 const savingSections = ref(false)
 const sectionsSaved = ref(false)
+const generatingSections = ref(false)
 
 // Gallery State
 const galleryItems = ref<any[]>([])
@@ -433,9 +561,14 @@ const guests = ref<any[]>([])
 const rsvps = ref<any[]>([])
 const rsvpStats = ref({ yes: 0, no: 0, maybe: 0 })
 const wishes = ref<any[]>([])
+const loveStories = ref<any[]>([])
+const editingStory = ref<any | null>(null)
+const savingStory = ref(false)
+const storyPhotoInput = ref<string>('')
 
 const newMedia = reactive({ url: '', type: 'image', caption: '' })
 const newGuest = reactive({ name: '', phone: '' })
+const newStory = reactive({ title: '', subtitle: '', year: '', photos: [] })
 const waGuest = ref('Budi')
 const waCopied = ref(false)
 
@@ -479,7 +612,7 @@ async function save() {
 
 const sectionIcons: Record<string, string> = {
   cover: '🖼️', bride_groom: '👰', countdown: '⏳', event_details: '📍',
-  love_story: '💕', gallery: '📸', rsvp: '✅', guest_wishes: '📌',
+  love_story: '💕', gallery: '📸', rsvp: '✅', guest_wishes: '💌',
   digital_gift: '🎁', live_stream: '📹', closing: '🌸'
 }
 function sectionIcon(type: string) { return sectionIcons[type] || '📄' }
@@ -558,6 +691,16 @@ async function fetchGallery(page = 1) {
   finally { isLoadingGallery.value = false }
 }
 
+  async function generateSections() {
+    generatingSections.value = true
+    try {
+      const res = await $fetch<any>(`/api/invitations/${invId}/generate-sections`, { method: 'POST' })
+      invSections.value = res.sections || []
+      sectionsSaved.value = true
+      setTimeout(() => { sectionsSaved.value = false }, 3000)
+    } catch (e) { console.error('Generate sections failed:', e) }
+    finally { generatingSections.value = false }
+  }
 function changeGalleryPage(page: number) {
   fetchGallery(page)
 }
@@ -627,6 +770,78 @@ async function addGuest() {
   newGuest.phone = ''
 }
 
+async function saveStory() {
+  if (!newStory.title) return
+  savingStory.value = true
+  try {
+    if (editingStory.value?.id) {
+      // Update existing
+      const updated = await $fetch<any>(`/api/love-stories/${editingStory.value.id}`, {
+        method: 'PUT',
+        body: {
+          title: newStory.title,
+          subtitle: newStory.subtitle,
+          year: newStory.year || new Date().getFullYear().toString(),
+          photos: newStory.photos
+        }
+      })
+      const idx = loveStories.value.findIndex(s => s.id === editingStory.value.id)
+      if (idx >= 0) loveStories.value[idx] = updated
+    } else {
+      // Create new
+      const created = await $fetch<any>('/api/love-stories', {
+        method: 'POST',
+        body: {
+          invitationId: invId,
+          title: newStory.title,
+          subtitle: newStory.subtitle,
+          year: newStory.year || new Date().getFullYear().toString(),
+          photos: newStory.photos
+        }
+      })
+      loveStories.value.push(created)
+    }
+    resetStoryForm()
+  } catch (e) {
+    console.error(e)
+  } finally {
+    savingStory.value = false
+  }
+}
+
+function editStory(story: any) {
+  editingStory.value = story
+  newStory.title = story.title
+  newStory.subtitle = story.subtitle || ''
+  newStory.year = story.year || ''
+  newStory.photos = story.photos || []
+}
+
+function resetStoryForm() {
+  editingStory.value = null
+  newStory.title = ''
+  newStory.subtitle = ''
+  newStory.year = ''
+  newStory.photos = []
+}
+
+async function deleteStory(id: string) {
+  if (!confirm('Delete this love story?')) return
+  await $fetch(`/api/love-stories/${id}`, { method: 'DELETE' })
+  loveStories.value = loveStories.value.filter(s => s.id !== id)
+}
+
+function addStoryPhoto(url: string) {
+  if (url && !newStory.photos.includes(url)) {
+    newStory.photos.push(url)
+    storyPhotoInput.value = ''
+  }
+}
+
+function addStoryPhotoFromInput() {
+  addStoryPhoto(storyPhotoInput.value)
+}
+
 onMounted(async () => {
   try {
     const data = await $fetch<any>(`/api/invitations/${invId}`)
@@ -656,17 +871,30 @@ onMounted(async () => {
       }))
       .sort((a: any, b: any) => a.displayOrder - b.displayOrder)
 
-    // Load gallery, guests, rsvps, wishes
-    const [gsts, rsvpData, wshs] = await Promise.all([
+    // Ensure Love Story can always be toggled from section settings.
+    if (!invSections.value.some((s: any) => s.type === 'love_story')) {
+      invSections.value.push({
+        type: 'love_story',
+        title: 'Love Story',
+        enabled: false,
+        displayOrder: invSections.value.length,
+        settingsJson: normalizeSectionSettings({})
+      })
+    }
+
+    // Load gallery, guests, rsvps, wishes, love stories
+    const [gsts, rsvpData, wshs, strs] = await Promise.all([
       $fetch<any[]>(`/api/guests/${invId}`).catch(() => []),
       $fetch<any>(`/api/rsvp/${invId}`).catch(() => ({ rsvps: [], stats: {} })),
       $fetch<any[]>(`/api/wishes/${invId}`).catch(() => []),
+      $fetch<any[]>(`/api/love-stories/${invId}`).catch(() => []),
     ])
     await fetchGallery(1)
     guests.value = gsts
     rsvps.value = rsvpData.rsvps || []
     rsvpStats.value = rsvpData.stats || { yes: 0, no: 0, maybe: 0 }
     wishes.value = wshs
+    loveStories.value = strs
   } finally { loading.value = false }
 })
 

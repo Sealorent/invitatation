@@ -26,6 +26,7 @@
             <option value="minimal">⬜ Minimal</option>
             <option value="luxury">✨ Luxury Gold</option>
             <option value="floral">🌸 Floral</option>
+            <option value="simple">🧩 Simple Full Section</option>
           </select>
         </div>
 

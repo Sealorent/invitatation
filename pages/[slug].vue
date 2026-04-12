@@ -46,115 +46,78 @@
 
     <!-- Invitation content -->
     <div v-else>
-      <template v-for="section in enabledSections" :key="section.id">
+      <!-- Debug info for blank page -->
+      <div v-if="!renderedSections.length && invitation" class="min-h-screen flex items-center justify-center bg-red-50 p-6">
+        <div class="max-w-2xl bg-white p-8 rounded-lg shadow-lg">
+          <h2 class="text-2xl font-bold text-red-600 mb-6">Debug: No Sections Rendered</h2>
+          <div class="space-y-4 text-gray-700 font-mono text-sm">
+            <p><strong>Invitation:</strong> {{ invitation?.id ? '✓ Loaded' : '✗ Missing' }}</p>
+            <p><strong>Theme:</strong> {{ activeTheme }}</p>
+            <p><strong>Invitation Opened:</strong> {{ invitationOpened }}</p>
+            <p><strong>Enabled Sections:</strong> {{ enabledSections.length }}</p>
+            <p><strong>Rendered Sections:</strong> {{ renderedSections.length }}</p>
+            <div v-if="enabledSections.length" class="mt-4 pt-4 border-t">
+              <p class="font-bold mb-2">Enabled sections:</p>
+              <div v-for="section in enabledSections" :key="section.id" class="text-xs pl-4 py-1">
+                - {{ section.type }} ({{ sectionRenderers[section.type] ? 'has renderer' : 'no renderer' }})
+              </div>
+            </div>
+          </div>
+          <button
+            @click="() => { console.log('Sections:', enabledSections); console.log('Rendered:', renderedSections) }"
+            class="mt-6 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Log Details to Console
+          </button>
+        </div>
+      </div>
+
+      <template v-for="item in renderedSections" :key="item.section.id">
         <div
           class="theme-section-wrap"
-          :class="sectionLayoutClass(section.type)"
-          :data-section-type="section.type"
-          :data-section-variant="sectionVariant(section.type)"
+          :class="sectionLayoutClass(item.section.type)"
+          :data-section-type="item.section.type"
+          :data-section-variant="sectionVariant(item.section.type)"
         >
-          <div
-            v-if="(section.type === 'cover' || invitationOpened) && section.type !== 'bride_groom' && sectionFreeTexts(section).length"
+          <!-- <div
+            v-if="shouldShowSectionFreeTexts(item.section)"
             class="max-w-3xl mx-auto px-6 pt-4 space-y-2"
           >
             <div
-              v-for="(freeText, textIdx) in sectionFreeTexts(section)"
-              :key="`${section.id}-free-text-${textIdx}`"
+              v-for="(freeText, textIdx) in sectionFreeTexts(item.section)"
+              :key="`${item.section.id}-free-text-${textIdx}`"
               class="text-sm text-center text-gray-600 leading-relaxed [&_p]:mb-2 [&_ul]:list-disc [&_ul]:ml-5 [&_ol]:list-decimal [&_ol]:ml-5"
               v-html="freeText"
             />
+          </div> -->
+
+          <component
+            v-if="item.renderer"
+            :is="item.renderer.component"
+            class="theme-section"
+            v-bind="item.renderer.props"
+            @error="(err) => console.error(`Component error for ${item.section.type}:`, err)"
+          />
+
+          <div v-else-if="item.isFallback" class="theme-section max-w-4xl mx-auto px-6 py-16 text-center">
+            <p class="text-xs uppercase tracking-[0.35em] text-rose-300 mb-3">
+              {{ item.section.title || item.section.type.replace(/_/g, ' ') }}
+            </p>
+            <h2 class="font-serif text-3xl font-semibold text-rose-800 mb-4">
+              {{ item.section.title || 'Custom Section' }}
+            </h2>
+            <div class="gold-divider mx-auto" />
+            <!-- <div
+              v-if="sectionFreeTexts(item.section).length"
+              class="mt-6 space-y-2 text-sm text-gray-600 leading-relaxed [&_p]:mb-2 [&_ul]:list-disc [&_ul]:ml-5 [&_ol]:list-decimal [&_ol]:ml-5"
+            >
+              <div
+                v-for="(freeText, textIdx) in sectionFreeTexts(item.section)"
+                :key="`${item.section.id}-fallback-free-text-${textIdx}`"
+                v-html="freeText"
+              />
+            </div> -->
           </div>
-
-          <component
-            v-if="section.type === 'cover' && invitation.brideName && invitation.groomName && invitation.weddingDate"
-            :is="SectionsCover"
-            class="theme-section"
-            :invitation="{
-              brideName: invitation.brideName,
-              groomName: invitation.groomName,
-              weddingDate: invitation.weddingDate,
-              coverPhoto: invitation.coverPhoto || ''
-            }"
-            :guest-name="guestName"
-            @open="onInvitationOpen"
-          />
-
-          <component
-            v-else-if="section.type === 'bride_groom' && invitationOpened && invitation.brideName && invitation.groomName"
-            :is="SectionsBrideGroom"
-            class="theme-section"
-            :invitation="{ brideName: invitation.brideName, groomName: invitation.groomName }"
-            :bride-profile="invitation.brideProfile"
-            :groom-profile="invitation.groomProfile"
-            :free-texts="sectionFreeTexts(section)"
-          />
-
-
-          <component
-            v-else-if="section.type === 'countdown' && invitationOpened && invitation.weddingDate"
-            :is="SectionsCountdown"
-            class="theme-section"
-            :invitation="{ weddingDate: invitation.weddingDate }"
-          />
-
-          <component
-            v-else-if="section.type === 'event_details' && invitationOpened && invitation.events?.length"
-            :is="SectionsEventDetails"
-            class="theme-section"
-            :events="invitation.events"
-          />
-
-          <component
-            v-else-if="section.type === 'love_story' && invitationOpened && invitation.loveStories?.length"
-            :is="SectionsLoveStory"
-            class="theme-section"
-            :stories="invitation.loveStories"
-          />
-
-          <component
-            v-else-if="section.type === 'gallery' && invitationOpened && invitation.gallery?.length"
-            :is="SectionsGallery"
-            class="theme-section"
-            :gallery="invitation.gallery"
-          />
-
-          <component
-            v-else-if="section.type === 'rsvp' && invitationOpened"
-            :is="SectionsRsvp"
-            class="theme-section"
-            :invitation-id="invitation.id"
-          />
-
-          <component
-            v-else-if="section.type === 'guest_wishes' && invitationOpened"
-            :is="SectionsWishes"
-            class="theme-section"
-            :invitation-id="invitation.id"
-            :wishes="invitation.wishes || []"
-          />
-
-          <component
-            v-else-if="section.type === 'digital_gift' && invitationOpened && invitation.bankAccounts?.length"
-            :is="SectionsGift"
-            class="theme-section"
-            :bank-accounts="invitation.bankAccounts"
-          />
-
-          <component
-            v-else-if="section.type === 'live_stream' && invitationOpened && sectionSettings(section).youtubeUrl"
-            :is="SectionsLiveStream"
-            class="theme-section"
-            :youtube-url="sectionSettings(section).youtubeUrl"
-          />
-
-          <component
-            v-else-if="section.type === 'closing' && invitationOpened && invitation.brideName && invitation.groomName"
-            :is="SectionsClosing"
-            class="theme-section"
-            :invitation="{ brideName: invitation.brideName, groomName: invitation.groomName, slug: invitation.slug }"
-            :closing-message="sectionSettings(section).closingMessage"
-            :couple-name="sectionSettings(section).coupleName"
-          />
 
         </div>
 
@@ -164,6 +127,7 @@
 </template>
 
 <script setup lang="ts">
+import type { Component } from 'vue'
 import SectionsCover from '~/components/sections/Cover.vue'
 import SectionsBrideGroom from '~/components/sections/BrideGroom.vue'
 import SectionsCountdown from '~/components/sections/Countdown.vue'
@@ -175,6 +139,7 @@ import SectionsWishes from '~/components/sections/Wishes.vue'
 import SectionsGift from '~/components/sections/Gift.vue'
 import SectionsLiveStream from '~/components/sections/LiveStream.vue'
 import SectionsClosing from '~/components/sections/Closing.vue'
+import { getInvitationThemeProfile, resolveInvitationTheme, sortSectionsForTheme } from '~/utils/invitation-theme-profiles'
 
 definePageMeta({ layout: false })
 
@@ -201,87 +166,325 @@ const audioRef = ref<HTMLAudioElement | null>(null)
 const musicPlaying = ref(false)
 const MUSIC_DEBUG = true
 
-const themeProfiles = {
-  romantic_classic: {
-    sectionVariants: {
-      gallery: 'masonry-soft',
-      event_details: 'cards-classic',
-      love_story: 'timeline-classic'
-    },
-    sectionLayouts: {
-      gallery: 'standard'
-    },
-    sectionOrder: [] as string[]
-  },
-  minimal: {
-    sectionVariants: {
-      gallery: 'grid-clean',
-      event_details: 'cards-minimal',
-      countdown: 'compact'
-    },
-    sectionLayouts: {
-      gallery: 'tight',
-      event_details: 'spacious'
-    },
-    sectionOrder: [] as string[]
-  },
-  luxury: {
-    sectionVariants: {
-      bride_groom: 'editorial-portrait',
-      gallery: 'editorial-offset',
-      event_details: 'cards-luxury',
-      closing: 'ceremony-grand'
-    },
-    sectionLayouts: {
-      bride_groom: 'editorial',
-      gallery: 'showcase',
-      event_details: 'framed'
-    },
-    sectionOrder: [] as string[]
-  },
-  floral: {
-    sectionVariants: {
-      gallery: 'masonry-petals',
-      event_details: 'cards-floral',
-      wishes: 'notes-soft'
-    },
-    sectionLayouts: {
-      gallery: 'floaty'
-    },
-    sectionOrder: [] as string[]
-  }
-} as const
+type SectionRecord = Record<string, any> & {
+  id: string
+  type: string
+  title?: string
+  settingsJson?: string | null
+  displayOrder?: number
+}
 
-type ThemeKey = keyof typeof themeProfiles
+type SectionRenderer = {
+  component: Component
+  props: Record<string, any>
+}
 
-const activeTheme = computed<ThemeKey>(() => {
-  const theme = String(invitation.value?.theme || 'romantic_classic')
-  return theme in themeProfiles ? (theme as ThemeKey) : 'romantic_classic'
-})
+const builtInSectionComponentNames: Record<string, string> = {
+  cover: 'Cover',
+  bride_groom: 'BrideGroom',
+  countdown: 'Countdown',
+  event_details: 'EventDetails',
+  love_story: 'LoveStory',
+  gallery: 'Gallery',
+  rsvp: 'Rsvp',
+  guest_wishes: 'Wishes',
+  digital_gift: 'Gift',
+  live_stream: 'LiveStream',
+  closing: 'Closing'
+}
+
+const defaultSectionComponents: Record<string, Component> = {
+  cover: SectionsCover,
+  bride_groom: SectionsBrideGroom,
+  countdown: SectionsCountdown,
+  event_details: SectionsEventDetails,
+  love_story: SectionsLoveStory,
+  gallery: SectionsGallery,
+  rsvp: SectionsRsvp,
+  guest_wishes: SectionsWishes,
+  digital_gift: SectionsGift,
+  live_stream: SectionsLiveStream,
+  closing: SectionsClosing
+}
+
+const themeSectionModules = {
+  ...(import.meta.glob('~/components/sections/themes/*/*.vue', {
+    eager: true
+  }) as Record<string, { default: Component }>)
+}
+
+const themeSectionOverrides: Record<string, Component> = {}
+for (const [path, module] of Object.entries(themeSectionModules)) {
+  const match = path.match(/\/themes\/([^/]+)\/([^/]+)\.vue$/)
+  if (!match) continue
+  const [, themeKey, componentName] = match
+  themeSectionOverrides[`${themeKey}:${componentName}`] = module.default
+}
+
+function toPascalCase(sectionType: string) {
+  return sectionType
+    .split('_')
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join('')
+}
+
+function sectionComponentName(sectionType: string) {
+  console.log(`[Sections] Resolving component name for section type "${sectionType}"`)
+  return builtInSectionComponentNames[sectionType] || toPascalCase(sectionType)
+}
+
+function resolveSectionComponent(sectionType: string): Component | null {
+  const componentName = sectionComponentName(sectionType)
+  const themedComponent = themeSectionOverrides[`${activeTheme.value}:${componentName}`]
+  console.log(`[Sections] Resolving component for section type "${sectionType}" (component name: "${componentName}")`, {
+    activeTheme: activeTheme.value,
+    themedComponentExists: Boolean(themedComponent),
+    defaultComponentExists: Boolean(defaultSectionComponents[sectionType]),
+    themedComponent: themeSectionOverrides[`${activeTheme.value}:${componentName}`]
+  })
+  if (themedComponent) return themedComponent
+  return defaultSectionComponents[sectionType] || null
+}
+
+const activeTheme = computed(() => resolveInvitationTheme(invitation.value?.theme))
 
 const themeStylesheetHref = computed(() => `/themes/${activeTheme.value}.css`)
 
-const activeThemeProfile = computed(() => themeProfiles[activeTheme.value])
+const activeThemeProfile = computed(() => getInvitationThemeProfile(activeTheme.value))
 
 const enabledSections = computed(() => {
-  if (!invitation.value?.sections) return []
-  const baseSections = (invitation.value.sections as Array<Record<string, any>>)
-    .filter((s) => s.enabled)
-    .sort((a, b) => (a.displayOrder as number) - (b.displayOrder as number))
+  if (!invitation.value?.sections) {
+    console.log('[Sections] No sections in invitation data')
+    return []
+  }
 
-  const order = activeThemeProfile.value.sectionOrder
-  if (!order.length) return baseSections
+  const dedupedByType = new Map<string, SectionRecord>()
+  for (const section of invitation.value.sections as SectionRecord[]) {
+    if (!section?.type || !section.enabled) continue
+    // Keep the first section per type based on existing DB order.
+    if (!dedupedByType.has(section.type)) {
+      dedupedByType.set(section.type, section)
+    }
+  }
 
-  const rank = new Map(order.map((type, index) => [type, index]))
-  const fallbackRank = order.length + 1
+  const baseSections = Array.from(dedupedByType.values())
+  const sorted = sortSectionsForTheme(baseSections, activeTheme.value)
+  return sorted
+})
 
-  return [...baseSections].sort((a, b) => {
-    const aRank = rank.get(String(a.type)) ?? fallbackRank
-    const bRank = rank.get(String(b.type)) ?? fallbackRank
-    if (aRank !== bRank) return aRank - bRank
-    return (a.displayOrder as number) - (b.displayOrder as number)
+const sectionRenderers: Record<string, (section: SectionRecord) => SectionRenderer | null> = {
+  cover: (section) => {
+    if (!invitation.value?.brideName || !invitation.value?.groomName || !invitation.value?.weddingDate) return null
+    const component = resolveSectionComponent('cover')
+    if (!component) return null
+    return {
+      component,
+      props: {
+        invitation: {
+          brideName: invitation.value.brideName,
+          groomName: invitation.value.groomName,
+          weddingDate: invitation.value.weddingDate,
+          coverPhoto: invitation.value.coverPhoto || ''
+        },
+        guestName: guestName.value,
+        onOpen: onInvitationOpen,
+        freeTexts: sectionFreeTexts(section)
+      }
+    }
+  },
+  bride_groom: (section) => {
+    if (!invitationOpened.value || !invitation.value?.brideName || !invitation.value?.groomName) return null
+    const component = resolveSectionComponent('bride_groom')
+    if (!component) return null
+    return {
+      component,
+      props: {
+        invitation: {
+          brideName: invitation.value.brideName,
+          groomName: invitation.value.groomName
+        },
+        brideProfile: invitation.value.brideProfile,
+        groomProfile: invitation.value.groomProfile,
+        freeTexts: sectionFreeTexts(section)
+      }
+    }
+  },
+  countdown: (section) => {
+    if (!invitationOpened.value || !invitation.value?.weddingDate) return null
+    const component = resolveSectionComponent('countdown')
+    if (!component) return null
+    return {
+      component,
+      props: {
+        invitation: { 
+          weddingDate: invitation.value.weddingDate,
+          brideName: invitation.value.brideName,
+          groomName: invitation.value.groomName,
+        },
+        freeTexts: sectionFreeTexts(section)
+      }
+    }
+  },
+  event_details: (section) => {
+    if (!invitationOpened.value || !invitation.value?.events?.length) return null
+    const component = resolveSectionComponent('event_details')
+    if (!component) return null
+    return {
+      component,
+      props: { 
+        events: invitation.value.events,
+        freeTexts: sectionFreeTexts(section)
+      }
+    }
+  },
+  love_story: (section) => {
+    if (!invitationOpened.value || !invitation.value?.loveStories?.length) return null
+    console.log('[Sections] Attempting to resolve love_story component', JSON.stringify(invitation.value?.loveStories, null, 2))
+    const component = resolveSectionComponent('love_story')
+    console.log('[Sections] Love Story section enabled, component found:', !!component)
+    if (!component) return null
+    return {
+      component,
+      props: {
+        stories: invitation.value.loveStories,
+        freeTexts: sectionFreeTexts(section)
+      }
+    }
+  },
+  gallery: (section) => {
+    if (!invitationOpened.value || !invitation.value?.gallery?.length) return null
+    const component = resolveSectionComponent('gallery')
+    if (!component) return null
+    return {
+      component,
+      props: {
+        gallery: invitation.value.gallery,
+        freeTexts: sectionFreeTexts(section)
+      }
+    }
+  },
+  rsvp: (section) => {
+    if (!invitationOpened.value || !invitation.value?.id) return null
+    const component = resolveSectionComponent('rsvp')
+    if (!component) return null
+    return {
+      component,
+      props: {
+        invitationId: invitation.value.id,
+        freeTexts: sectionFreeTexts(section)
+      }
+    }
+  },
+  guest_wishes: (section) => {
+    if (!invitationOpened.value || !invitation.value?.id) return null
+    const component = resolveSectionComponent('guest_wishes')
+    if (!component) return null
+    return {
+      component,
+      props: {
+        invitationId: invitation.value.id,
+        wishes: invitation.value.wishes || [],
+        freeTexts: sectionFreeTexts(section)
+      }
+    }
+  },
+  digital_gift: (section) => {
+    if (!invitationOpened.value || !invitation.value?.bankAccounts?.length) return null
+    const component = resolveSectionComponent('digital_gift')
+    if (!component) return null
+    return {
+      component,
+      props: {
+        bankAccounts: invitation.value.bankAccounts,
+        freeTexts: sectionFreeTexts(section)
+      }
+    }
+  },
+  live_stream: (section) => {
+    const youtubeUrl = sectionSettings(section).youtubeUrl
+    if (!invitationOpened.value || !youtubeUrl) return null
+    const component = resolveSectionComponent('live_stream')
+    if (!component) return null
+    return {
+      component,
+      props: {
+        youtubeUrl,
+        freeTexts: sectionFreeTexts(section)
+      }
+    }
+  },
+  closing: (section) => {
+    if (!invitationOpened.value || !invitation.value?.brideName || !invitation.value?.groomName) return null
+    const component = resolveSectionComponent('closing')
+    if (!component) return null
+    const settings = sectionSettings(section)
+    return {
+      component,
+      props: {
+        gallery: invitation.value.gallery,
+        invitation: {
+          brideName: invitation.value.brideName,
+          groomName: invitation.value.groomName,
+          slug: invitation.value.slug
+        },
+        closingMessage: settings.closingMessage,
+        coupleName: settings.coupleName,
+        freeTexts: sectionFreeTexts(section)
+      }
+    }
+  }
+}
+
+const renderedSections = computed(() => {
+  return enabledSections.value.flatMap((section) => {
+    try {
+      const rendererFactory = sectionRenderers[section.type]
+
+      if (!rendererFactory) {
+        const component = resolveSectionComponent(section.type)
+        console.log(`[Sections] No renderer factory for section type "${section.type}". Using fallback if component exists:`, { hasComponent: !!component })
+        if (component) {
+          return [{
+            section,
+            renderer: {
+              component,
+              props: {
+                invitation: invitation.value,
+                section,
+                settings: sectionSettings(section),
+                invitationOpened: invitationOpened.value,
+                guestName: guestName.value
+              }
+            },
+            isFallback: false
+          }]
+        }
+        return [{ section, renderer: null, isFallback: true }]
+      }
+
+      const renderer = rendererFactory(section)
+      if (!renderer) {
+        console.log(`[Sections] Skipping ${section.type} - renderer returned null`)
+        return []
+      }
+
+      console.log(`[Sections] Rendering ${section.type}`, { invitationOpened: invitationOpened.value })
+      return [{ section, renderer, isFallback: false }]
+    } catch (err) {
+      console.error(`[Sections] Error rendering ${section.type}:`, err)
+      return []
+    }
   })
 })
+
+watch(renderedSections, (sections) => {
+  console.log('[Sections] Total rendered:', sections.length, 'Sections:', sections.map(s => ({ type: s.section.type, hasRenderer: !!s.renderer, isFallback: s.isFallback })))
+}, { immediate: true })
+
+function shouldShowSectionFreeTexts(section: SectionRecord) {
+  return (section.type === 'cover' || invitationOpened.value) && section.type !== 'bride_groom' && sectionFreeTexts(section).length > 0
+}
 
 function sectionVariant(sectionType: string) {
   return activeThemeProfile.value.sectionVariants[sectionType as keyof typeof activeThemeProfile.value.sectionVariants] || 'default'

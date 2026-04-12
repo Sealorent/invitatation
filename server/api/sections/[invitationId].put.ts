@@ -4,7 +4,14 @@ import { requireAuth } from '~/server/utils/auth'
 // PUT /api/sections/:invitationId — bulk update/reorder sections
 export default defineEventHandler(async (event) => {
   const { userId } = requireAuth(event)
-  const invitationId = getRouterParam(event, 'invitationId')!
+  const invitationId = getRouterParam(event, 'invitationId') || getRouterParam(event, 'id')
+
+  if (!invitationId) {
+    throw createError({
+      statusCode: 400,
+      message: 'Missing invitationId route param'
+    })
+  }
   const body = await readBody(event)
   const sections = Array.isArray(body)
     ? body
@@ -38,6 +45,26 @@ export default defineEventHandler(async (event) => {
           }
         })
       } else {
+        const existingByType = await prisma.section.findFirst({
+          where: {
+            invitationId,
+            type: (s.type as string) || ''
+          },
+          orderBy: { createdAt: 'asc' }
+        })
+
+        if (existingByType) {
+          return prisma.section.update({
+            where: { id: existingByType.id },
+            data: {
+              title: (s.title as string) || existingByType.title,
+              enabled: s.enabled !== false,
+              displayOrder: typeof s.displayOrder === 'number' ? s.displayOrder : i,
+              settingsJson: typeof s.settingsJson === 'string' ? s.settingsJson : JSON.stringify(s.settingsJson || {})
+            }
+          })
+        }
+
         return prisma.section.create({
           data: {
             invitationId,

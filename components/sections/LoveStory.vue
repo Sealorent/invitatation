@@ -15,12 +15,33 @@
       >
         <!-- Content card -->
         <div class="flex-1 card-romantic p-6">
-          <div v-if="story.photo" class="mb-4 rounded-xl overflow-hidden">
+          <!-- Multiple photos carousel/grid -->
+          <div v-if="story.photos?.length" class="mb-4 rounded-xl overflow-hidden">
+            <div v-if="story.photos.length === 1" class="w-full">
+              <img :src="story.photos[0]" :alt="story.title" class="w-full h-40 object-cover rounded-lg" />
+            </div>
+            <div v-else class="grid grid-cols-2 gap-2">
+              <img 
+                v-for="(photo, idx) in story.photos.slice(0, 4)" 
+                :key="idx"
+                :src="photo" 
+                :alt="`${story.title} photo ${idx + 1}`" 
+                class="w-full h-24 object-cover rounded-lg"
+              />
+            </div>
+          </div>
+          
+          <!-- Fallback to old photo field -->
+          <div v-else-if="story.photo" class="mb-4 rounded-xl overflow-hidden">
             <img :src="story.photo" :alt="story.title" class="w-full h-40 object-cover" />
           </div>
+
           <span class="text-xs font-bold bg-rose-100 text-rose-600 px-3 py-1 rounded-full">{{ story.year }}</span>
           <h3 class="font-serif text-lg font-semibold text-rose-800 mt-2 mb-1">{{ story.title }}</h3>
-          <p class="text-gray-600 text-sm leading-relaxed">{{ story.description }}</p>
+          
+          <!-- Display subtitle (rich text) or fall back to description -->
+          <div v-if="story.subtitle" class="text-gray-600 text-sm leading-relaxed prose prose-sm max-w-none" v-html="story.subtitle" />
+          <p v-else-if="story.description" class="text-gray-600 text-sm leading-relaxed">{{ story.description }}</p>
         </div>
 
         <!-- Timeline dot -->
@@ -40,7 +61,15 @@
 
 <script setup lang="ts">
 defineProps<{
-  stories: Array<{ id: string; year: string; title: string; description: string; photo?: string }>
+  stories: Array<{ 
+    id: string
+    year?: string
+    title: string
+    subtitle?: string
+    description?: string
+    photo?: string
+    photos?: string[]
+  }>
 }>()
 
 const sectionRef = ref<HTMLElement>()

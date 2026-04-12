@@ -31,10 +31,51 @@
         >
           {{ copied === account.accountNumber ? '✅ Copied!' : '📋 Copy Number' }}
         </button>
+
+        <!-- View Bank Card Button -->
+        <button
+          @click="selectedBank = account"
+          class="btn-outline mt-2 text-sm"
+        >
+          💳 View Bank Card
+        </button>
       </div>
     </div>
 
     <div v-if="bankAccounts.length === 0" class="text-center text-gray-400 py-8 text-sm">No bank account info provided</div>
+
+    <!-- Bank Card Modal -->
+    <div
+      v-if="selectedBank"
+      class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4"
+      @click="selectedBank = null"
+    >
+      <div
+        class="bg-gradient-to-br from-rose-900/80 via-rose-800/70 to-rose-900/80 backdrop-blur rounded-3xl p-8 max-w-sm border border-rose-700/50 shadow-2xl"
+        @click.stop
+      >
+        <button
+          class="absolute top-4 right-4 text-white text-2xl hover:text-rose-200 transition"
+          @click="selectedBank = null"
+        >
+          ✕
+        </button>
+        <div class="text-center">
+          <div class="text-5xl mb-4">💳</div>
+          <h3 class="font-serif text-2xl font-semibold text-rose-100 mb-2">{{ selectedBank.bankName }}</h3>
+          <p class="text-rose-200 text-sm mb-4">Account Number</p>
+          <p class="font-mono text-2xl font-bold tracking-widest text-white bg-black/30 py-3 px-4 rounded-lg mb-4">{{ selectedBank.accountNumber }}</p>
+          <p class="text-rose-100 mb-2">Account Holder</p>
+          <p class="text-white font-semibold mb-6">{{ selectedBank.accountHolder }}</p>
+          <button
+            @click.stop="copyNumber(selectedBank.accountNumber)"
+            class="w-full bg-rose-600 hover:bg-rose-500 text-white font-semibold py-3 px-4 rounded-lg transition"
+          >
+            {{ copied === selectedBank.accountNumber ? '✅ Copied!' : '📋 Copy Number' }}
+          </button>
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 
@@ -45,6 +86,7 @@ defineProps<{ bankAccounts: BankAccount[] }>()
 const sectionRef = ref<HTMLElement>()
 const isVisible = ref(false)
 const copied = ref('')
+const selectedBank = ref<BankAccount | null>(null)
 
 async function copyNumber(num: string) {
   await navigator.clipboard.writeText(num).catch(() => {})

@@ -1,5 +1,21 @@
 import { prisma } from '~/server/utils/prisma'
 
+function parseLoveStoryPhotos(story: Record<string, any>) {
+  let photos: string[] = []
+
+  try {
+    photos = story.photosJson ? JSON.parse(story.photosJson) : []
+  } catch {
+    photos = []
+  }
+
+  return {
+    ...story,
+    photos,
+    photo: story.photo || photos[0] || ''
+  }
+}
+
 export default defineEventHandler(async (event) => {
   const slug = getRouterParam(event, 'slug')!
 
@@ -30,6 +46,9 @@ export default defineEventHandler(async (event) => {
   }
 
   // Don't expose user/password data
-  const { userId, ...publicData } = invitation as Record<string, unknown>
-  return publicData
+  const { userId, loveStories, ...publicData } = invitation as Record<string, any>
+  return {
+    ...publicData,
+    loveStories: Array.isArray(loveStories) ? loveStories.map(parseLoveStoryPhotos) : []
+  }
 })
