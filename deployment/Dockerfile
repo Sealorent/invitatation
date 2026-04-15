@@ -3,13 +3,13 @@ FROM node:20-bullseye-slim AS builder
 WORKDIR /app
 
 # Install dependencies first for better layer caching.
-COPY package.json package-lock.json ./
-RUN npm ci
+COPY package.json yarn.lock ./
+RUN corepack enable && yarn install --frozen-lockfile
 
 # Copy source and build Nuxt for production.
 COPY . .
 RUN npx prisma generate
-RUN npm run build
+RUN yarn build
 
 FROM node:20-bullseye-slim AS runner
 WORKDIR /app
