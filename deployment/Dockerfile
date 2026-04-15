@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM node:20-bullseye-slim AS builder
+FROM node:22-bullseye-slim AS builder
 WORKDIR /app
 
 # Install dependencies first for better layer caching.
@@ -11,7 +11,7 @@ COPY . .
 RUN npx prisma generate
 RUN yarn build
 
-FROM node:20-bullseye-slim AS runner
+FROM node:22-bullseye-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NITRO_HOST=0.0.0.0
