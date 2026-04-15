@@ -10,6 +10,7 @@
       aria-hidden="true"
     >
       <iframe
+        ref="youtubeIframeRef"
         id="youtube-music-player"
         :src="activeYoutubeMusicEmbedUrl"
         title="Background music"
@@ -163,6 +164,7 @@ onMounted(async () => {
 
 const invitationOpened = ref(false)
 const audioRef = ref<HTMLAudioElement | null>(null)
+const youtubeIframeRef = ref<HTMLIFrameElement | null>(null)
 const musicPlaying = ref(false)
 const MUSIC_DEBUG = true
 
@@ -562,6 +564,28 @@ const youtubeMusicBaseEmbedUrl = computed(() => {
   if (!id) return ''
   return `https://www.youtube.com/embed/${id}?controls=0&loop=1&playlist=${id}&rel=0&modestbranding=1&playsinline=1`
 })
+
+function youtubeAutoplayUrl() {
+  if (!youtubeMusicBaseEmbedUrl.value) return ''
+  const separator = youtubeMusicBaseEmbedUrl.value.includes('?') ? '&' : '?'
+  return `${youtubeMusicBaseEmbedUrl.value}${separator}autoplay=1&t=${Date.now()}`
+}
+
+function startYoutubeMusicFromGesture() {
+  const url = youtubeAutoplayUrl()
+  if (!url) return
+
+  // Update iframe src directly inside click/tap gesture for better mobile compatibility.
+  if (youtubeIframeRef.value) {
+    youtubeIframeRef.value.src = url
+  }
+
+  musicPlaying.value = true
+
+  if (MUSIC_DEBUG) {
+    console.log('[music] youtube start requested from user gesture', { url })
+  }
+}
 const activeYoutubeMusicEmbedUrl = computed(() => {
   if (!isYoutubeMusic.value || !invitationOpened.value) return ''
   if (!musicPlaying.value) return ''
@@ -580,12 +604,7 @@ async function onInvitationOpen() {
   }
 
   if (isYoutubeMusic.value) {
-    musicPlaying.value = true
-    if (MUSIC_DEBUG) {
-      console.log('[music] youtube music start request', {
-        embedUrl: activeYoutubeMusicEmbedUrl.value,
-      })
-    }
+    startYoutubeMusicFromGesture()
     return
   }
 
@@ -610,7 +629,13 @@ function toggleMusic() {
   }
 
   if (isYoutubeMusic.value) {
-    musicPlaying.value = !musicPlaying.value
+    if (musicPlaying.value) {
+      if (youtubeIframeRef.value) youtubeIframeRef.value.src = ''
+      musicPlaying.value = false
+    } else {
+      startYoutubeMusicFromGesture()
+    }
+
     if (MUSIC_DEBUG) {
       console.log('[music] youtube state changed', {
         playing: musicPlaying.value,

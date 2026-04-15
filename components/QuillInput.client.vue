@@ -23,8 +23,10 @@ let quill: any = null
 
 const modules = {
   toolbar: [
+    [{ size: ['small', false, 'large', 'huge'] }],
     ['bold', 'italic', 'underline'],
     [{ list: 'ordered' }, { list: 'bullet' }],
+    [{ align: [] }],
     ['link'],
     ['clean']
   ]

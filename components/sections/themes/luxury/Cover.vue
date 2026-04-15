@@ -16,10 +16,6 @@
       <div class="absolute inset-0 opacity-35" style="background-image: radial-gradient(circle at 30% 20%, rgba(255,215,120,0.5), transparent 35%), radial-gradient(circle at 75% 80%, rgba(255,235,180,0.38), transparent 40%);" />
     </div>
 
-    <div class="absolute top-8 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
-      <p class="text-[11px] sm:text-xs uppercase tracking-[0.35em] text-amber-100/90">Luxury Gold Edition</p>
-    </div>
-
     <div class="relative z-10 text-center text-white pb-14 sm:pb-16 px-6 max-w-3xl">
       <div v-if="guestName" class="mb-6 sm:mb-8 animate-fade-in">
         <p class="text-[11px] uppercase tracking-[0.32em] text-amber-100 mb-1">Kepada Yth :</p>

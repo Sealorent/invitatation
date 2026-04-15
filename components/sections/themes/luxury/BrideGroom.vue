@@ -26,8 +26,8 @@
           <div class="role-strip bride-strip">THE BRIDE</div>
           <template v-if="brideData.photo">
             <div class="photo-motion">
-              <img :src="brideData.photo" :alt="brideData.name" class="photo-layer photo-color" />
-              <img :src="brideData.photo" :alt="`${brideData.name} grayscale`" class="photo-layer photo-gray" />
+              <img :src="brideData.photo" :alt="brideData.name" class="photo-layer-bride photo-color" />
+              <img :src="brideData.photo" :alt="`${brideData.name} grayscale`" class="photo-layer-bride photo-gray" />
             </div>
           </template>
           <div v-else class="w-full h-full flex items-center justify-center text-6xl bg-zinc-800">👰</div>
@@ -64,8 +64,8 @@
           <div class="role-strip groom-strip">THE GROOM</div>
           <template v-if="groomData.photo">
             <div class="photo-motion">
-              <img :src="groomData.photo" :alt="groomData.name" class="photo-layer photo-color" />
-              <img :src="groomData.photo" :alt="`${groomData.name} grayscale`" class="photo-layer photo-gray" />
+              <img :src="groomData.photo" :alt="groomData.name" class="photo-layer-groom photo-color" />
+              <img :src="groomData.photo" :alt="`${groomData.name} grayscale`" class="photo-layer-groom photo-gray" />
             </div>
           </template>
           <div v-else class="w-full h-full flex items-center justify-center text-6xl bg-zinc-800">🤵</div>
@@ -191,12 +191,22 @@ onMounted(() => {
   animation: none;
 }
 
-.photo-layer {
+.photo-layer-groom {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center 40%;
+}
+
+.photo-layer-bride {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
 }
 
 .photo-color {

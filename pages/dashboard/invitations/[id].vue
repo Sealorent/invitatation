@@ -375,36 +375,47 @@
 
         <!-- List of Love Stories -->
         <div class="dashboard-card">
-          <h3 class="font-serif text-lg text-rose-700 mb-4">Love Stories ({{ loveStories.length }})</h3>
+          <div class="flex items-center justify-between gap-3 mb-4">
+            <h3 class="font-serif text-lg text-rose-700">Love Stories ({{ loveStories.length }})</h3>
+            <button @click="saveLoveStoryOrder" :disabled="savingLoveStoryOrder || !loveStories.length" class="btn-outline text-xs px-3 py-1">
+              {{ savingLoveStoryOrder ? 'Saving order...' : 'Save Order' }}
+            </button>
+          </div>
+          <p v-if="loveStoryOrderSaved" class="text-green-600 text-sm mb-3">✅ Love story order updated!</p>
           
           <div v-if="!loveStories.length" class="text-center text-gray-400 py-8 text-sm">
             No love stories yet. Create one above!
           </div>
 
-          <div v-else class="space-y-4">
-            <div v-for="story in loveStories" :key="story.id" class="border border-rose-100 rounded-lg p-4 hover:bg-rose-50 transition-colors">
-              <div class="flex items-start justify-between mb-3">
-                <div class="flex-1">
-                  <div class="flex items-center gap-2 mb-1">
-                    <h4 class="font-serif text-lg text-rose-700">{{ story.title }}</h4>
-                    <span v-if="story.year" class="text-sm text-gray-500">({{ story.year }})</span>
+          <draggable v-else v-model="loveStories" item-key="id" handle=".handle" class="space-y-4" @end="saveLoveStoryOrder">
+            <template #item="{ element: story }">
+              <div class="border border-rose-100 rounded-lg p-4 hover:bg-rose-50 transition-colors">
+                <div class="flex items-start justify-between mb-3">
+                  <div class="flex items-center gap-2">
+                    <span class="handle cursor-move text-gray-400">☰</span>
+                    <div class="flex-1">
+                      <div class="flex items-center gap-2 mb-1">
+                        <h4 class="font-serif text-lg text-rose-700">{{ story.title }}</h4>
+                        <span v-if="story.year" class="text-sm text-gray-500">({{ story.year }})</span>
+                      </div>
+                      <p v-if="story.subtitle" class="text-sm text-gray-600 line-clamp-2" v-html="story.subtitle" />
+                    </div>
                   </div>
-                  <p v-if="story.subtitle" class="text-sm text-gray-600 line-clamp-2" v-html="story.subtitle" />
+                  <div class="flex gap-2 ml-4">
+                    <button @click="editStory(story)" class="btn-outline text-xs px-3 py-1">Edit</button>
+                    <button @click="deleteStory(story.id)" class="px-3 py-1 text-xs rounded-lg bg-red-100 text-red-600 hover:bg-red-200 transition-colors">Delete</button>
+                  </div>
                 </div>
-                <div class="flex gap-2 ml-4">
-                  <button @click="editStory(story)" class="btn-outline text-xs px-3 py-1">Edit</button>
-                  <button @click="deleteStory(story.id)" class="px-3 py-1 text-xs rounded-lg bg-red-100 text-red-600 hover:bg-red-200 transition-colors">Delete</button>
-                </div>
-              </div>
 
-              <!-- Story Photos Preview -->
-              <div v-if="story.photos?.length" class="flex gap-2 flex-wrap mt-3">
-                <div v-for="(photo, idx) in story.photos" :key="idx" class="w-16 h-16 rounded-lg overflow-hidden border border-rose-100">
-                  <img :src="photo" :alt="`Photo ${Number(idx) + 1}`" class="w-full h-full object-cover" />
+                <!-- Story Photos Preview -->
+                <div v-if="story.photos?.length" class="flex gap-2 flex-wrap mt-3">
+                  <div v-for="(photo, idx) in story.photos" :key="idx" class="w-16 h-16 rounded-lg overflow-hidden border border-rose-100">
+                    <img :src="photo" :alt="`Photo ${Number(idx) + 1}`" class="w-full h-full object-cover" />
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
+            </template>
+          </draggable>
         </div>
       </div>
 
@@ -501,7 +512,7 @@
         </div>
         <div class="flex gap-3">
           <button @click="copyWaMessage" class="btn-outline text-sm">{{ waCopied ? '✅ Copied!' : '📋 Copy Message' }}</button>
-          <a :href="waLink" target="_blank" class="btn-primary text-sm">📱 Open WhatsApp</a>
+          <button @click="openWhatsApp" class="btn-primary text-sm">📱 Open WhatsApp</button>
         </div>
       </div>
     </template>
@@ -509,6 +520,7 @@
 </template>
 
 <script setup lang="ts">
+import draggable from 'vuedraggable'
 import QuillInput from '~/components/QuillInput.client.vue'
 
 definePageMeta({ layout: 'dashboard' })
@@ -564,6 +576,8 @@ const wishes = ref<any[]>([])
 const loveStories = ref<any[]>([])
 const editingStory = ref<any | null>(null)
 const savingStory = ref(false)
+const savingLoveStoryOrder = ref(false)
+const loveStoryOrderSaved = ref(false)
 const storyPhotoInput = ref<string>('')
 
 const newMedia = reactive({ url: '', type: 'image', caption: '' })
@@ -576,7 +590,7 @@ const waMessage = computed(() => {
   const url = typeof window !== 'undefined' ? `${window.location.origin}/${inv.value?.slug}?to=${encodeURIComponent(waGuest.value)}` : ''
   return `Kepada Yth.\nBapak/Ibu/Sdr/i ${waGuest.value}\n\nTanpa mengurangi rasa hormat, kami mengundang Anda untuk hadir dalam pernikahan kami:\n\n💍 ${inv.value?.groomName} & ${inv.value?.brideName}\n\nBuka undangan:\n${url}\n\nMerupakan suatu kebahagiaan bagi kami apabila Bapak/Ibu/Sdr/i berkenan hadir. Terima kasih 🙏`
 })
-const waLink = computed(() => `https://api.whatsapp.com/send?text=${encodeURIComponent(waMessage.value)}`)
+const waLink = computed(() => `https://wa.me/?text=${encodeURIComponent(waMessage.value)}`)
 
 function formatDate(d: string) {
   return new Date(d).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
@@ -592,6 +606,16 @@ async function copyWaMessage() {
   await navigator.clipboard.writeText(waMessage.value).catch(() => {})
   waCopied.value = true
   setTimeout(() => { waCopied.value = false }, 2000)
+}
+
+function openWhatsApp() {
+  if (!import.meta.client) return
+  const opened = window.open(waLink.value, '_blank', 'noopener,noreferrer')
+
+  // On some mobile browsers/new-tab blockers, fallback to same-tab navigation.
+  if (!opened) {
+    window.location.href = waLink.value
+  }
 }
 
 async function save() {
@@ -782,7 +806,8 @@ async function saveStory() {
           title: newStory.title,
           subtitle: newStory.subtitle,
           year: newStory.year || new Date().getFullYear().toString(),
-          photos: newStory.photos
+          photos: newStory.photos,
+          displayOrder: loveStories.value.findIndex(s => s.id === editingStory.value.id)
         }
       })
       const idx = loveStories.value.findIndex(s => s.id === editingStory.value.id)
@@ -796,7 +821,8 @@ async function saveStory() {
           title: newStory.title,
           subtitle: newStory.subtitle,
           year: newStory.year || new Date().getFullYear().toString(),
-          photos: newStory.photos
+          photos: newStory.photos,
+          displayOrder: loveStories.value.length
         }
       })
       loveStories.value.push(created)
@@ -840,6 +866,29 @@ function addStoryPhoto(url: string) {
 
 function addStoryPhotoFromInput() {
   addStoryPhoto(storyPhotoInput.value)
+}
+
+async function saveLoveStoryOrder() {
+  if (!loveStories.value.length) return
+  savingLoveStoryOrder.value = true
+  loveStoryOrderSaved.value = false
+  try {
+    await Promise.all(
+      loveStories.value.map((story, index) =>
+        $fetch(`/api/love-stories/${story.id}`, {
+          method: 'PUT',
+          body: { displayOrder: index }
+        })
+      )
+    )
+    loveStories.value = loveStories.value.map((story, index) => ({ ...story, displayOrder: index }))
+    loveStoryOrderSaved.value = true
+    setTimeout(() => { loveStoryOrderSaved.value = false }, 2000)
+  } catch (e) {
+    console.error('Failed to save love story order:', e)
+  } finally {
+    savingLoveStoryOrder.value = false
+  }
 }
 
 onMounted(async () => {
@@ -894,7 +943,7 @@ onMounted(async () => {
     rsvps.value = rsvpData.rsvps || []
     rsvpStats.value = rsvpData.stats || { yes: 0, no: 0, maybe: 0 }
     wishes.value = wshs
-    loveStories.value = strs
+    loveStories.value = strs.sort((a, b) => a.displayOrder - b.displayOrder)
   } finally { loading.value = false }
 })
 
