@@ -505,6 +505,10 @@
         <p class="text-sm text-gray-500">Generate personalized WhatsApp messages for each guest.</p>
         <div>
           <label class="form-label">Guest Name (preview)</label>
+          <input v-model="guestName" class="form-input" placeholder="Guest name" />
+        </div>
+        <div>
+          <label class="form-label">Guest Name (preview)</label>
           <input v-model="waGuest" class="form-input" placeholder="Guest name" />
         </div>
         <div class="p-4 bg-green-50 rounded-xl border border-green-100">
@@ -583,12 +587,13 @@ const storyPhotoInput = ref<string>('')
 const newMedia = reactive({ url: '', type: 'image', caption: '' })
 const newGuest = reactive({ name: '', phone: '' })
 const newStory = reactive({ title: '', subtitle: '', year: '', photos: [] })
-const waGuest = ref('Budi')
+const waGuest = ref('08xxxxxxxx')
+const guestName = ref('Budi')
 const waCopied = ref(false)
 
 const waMessage = computed(() => {
   const url = typeof window !== 'undefined' ? `${window.location.origin}/${inv.value?.slug}?to=${encodeURIComponent(waGuest.value)}` : ''
-  return `Kepada Yth.\nBapak/Ibu/Sdr/i ${waGuest.value}\n\nTanpa mengurangi rasa hormat, kami mengundang Anda untuk hadir dalam pernikahan kami:\n\n💍 ${inv.value?.groomName} & ${inv.value?.brideName}\n\nBuka undangan:\n${url}\n\nMerupakan suatu kebahagiaan bagi kami apabila Bapak/Ibu/Sdr/i berkenan hadir. Terima kasih 🙏`
+  return `Kepada Yth.\nBapak/Ibu/Sdr/i ${guestName.value}\n\nTanpa mengurangi rasa hormat, kami mengundang Anda untuk hadir dalam pernikahan kami:\n\n💍 ${inv.value?.groomName} & ${inv.value?.brideName}\n\nBuka undangan:\n${url}\n\nMerupakan suatu kebahagiaan bagi kami apabila Bapak/Ibu/Sdr/i berkenan hadir. Terima kasih 🙏`
 })
 const waLink = computed(() => `https://wa.me/?text=${encodeURIComponent(waMessage.value)}`)
 
@@ -609,8 +614,12 @@ async function copyWaMessage() {
 }
 
 function openWhatsApp() {
-  if (!import.meta.client) return
-  const opened = window.open(waLink.value, '_blank', 'noopener,noreferrer')
+  // if (!import.meta.client) return
+  // when fit
+
+  const link = `https://wa.me/${waGuest.value.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(waMessage.value)}`
+  const opened = window.open(link, '_blank', 'noopener,noreferrer') 
+
 
   // On some mobile browsers/new-tab blockers, fallback to same-tab navigation.
   if (!opened) {

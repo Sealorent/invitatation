@@ -11,11 +11,6 @@
         <h2 class="font-serif text-4xl italic leading-none text-zinc-100 md:text-5xl">Our Stories</h2>
         <div class="h-px flex-1 bg-zinc-300/70" />
       </div>
-<!-- 
-      <p class="mt-4 text-right font-serif text-xl italic leading-snug text-zinc-100 md:text-2xl">
-        <span class="quote-chip">Every Love Story Is Beautiful,</span><br>
-        <span class="quote-chip">But Ours Is My Favorite.</span>
-      </p> -->
 
       <div v-if="freeTexts.length" class="mt-5 space-y-2 text-right ">
         <div
@@ -62,12 +57,12 @@
 
           <div
             v-if="story.subtitle"
-            class="mt-3 text-[20px] leading-relaxed text-zinc-100 md:text-3xl [&_p]:mb-2"
+            class="mt-3 text-sm leading-relaxed text-zinc-100 [&_p]:mb-2"
             v-html="story.subtitle"
           />
-          <p v-else-if="story.description" class="mt-3 text-xs leading-relaxed text-zinc-100 md:text-sm">
+          <!-- <p v-else-if="story.description" class="mt-3 text-[5px] leading-relaxed text-zinc-100 md:text-sm">
             {{ story.description }}
-          </p>
+          </p> -->
         </div>
       </article>
     </div>

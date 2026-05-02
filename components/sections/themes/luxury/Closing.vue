@@ -30,7 +30,7 @@
       <p class="font-display text-lg tracking-widest text-amber-300/90 mb-2">
         Kami yang berbahagia
       </p>
-      <h2 class="font-serif text-4xl md:text-6xl text-white mt-2">
+      <h2 class="font-serif text-2xl md:text-2xl text-white mt-2">
         {{ invitation.brideName }} & {{ invitation.groomName }}
       </h2>
     </div>
