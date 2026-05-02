@@ -20,7 +20,7 @@
     </div>
 
     <!-- Bride block -->
-    <article class="max-w-6xl mx-auto pl-12 pr-0 md:px-0 mb-8 md:mb-12 md:ml-10 md:mr-6">
+    <article class="w-full max-w-6xl mx-auto px-4 md:px-6 mb-8 md:mb-12">
       <div class="couple-frame">
         <div class="photo-stage">
           <div class="role-strip bride-strip">THE BRIDE</div>
@@ -34,7 +34,7 @@
         </div>
       </div>
 
-      <div class="max-w-6xl mx-auto px-4 md:pl-10 md:pr-6 pt-3 text-right">
+      <div class="w-full px-4 md:px-6 pt-3 text-right">
         <h3 class="font-script text-3xl md:text-5xl text-zinc-100">{{ brideData.name }}</h3>
         <p v-if="brideData.fatherName" class="text-sm md:text-base text-zinc-200 mt-2">
           Putri dari <strong>{{ brideData.fatherName }}</strong>
@@ -51,14 +51,14 @@
       </div>
     </article>
 
-    <div class="max-w-6xl mx-auto px-4 md:px-6 mb-8 md:mb-10 flex items-center gap-4">
+    <div class="w-full max-w-6xl mx-auto px-4 md:px-6 mb-8 md:mb-10 flex items-center gap-4">
       <div class="h-px flex-1 bg-zinc-300" />
       <span class="text-4xl leading-none text-zinc-100">♡</span>
       <div class="h-px flex-1 bg-zinc-300" />
     </div>
 
     <!-- Groom block -->
-    <article class="max-w-6xl mx-auto pl-0 pr-12 md:px-0 md:ml-6 md:mr-10">
+    <article class="w-full max-w-6xl mx-auto px-4 md:px-6">
       <div class="couple-frame">
         <div class="photo-stage">
           <div class="role-strip groom-strip">THE GROOM</div>
@@ -72,7 +72,7 @@
         </div>
       </div>
 
-      <div class="max-w-6xl mx-auto px-4 md:pl-6 md:pr-10 pt-3 text-left">
+      <div class="w-full px-4 md:px-6 pt-3 text-left">
         <h3 class="font-script text-3xl md:text-5xl text-zinc-100">{{ groomData.name }}</h3>
         <p v-if="groomData.fatherName" class="text-sm md:text-base text-zinc-200 mt-2">
           Putra dari <strong>{{ groomData.fatherName }}</strong>
@@ -206,7 +206,7 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 30%;
+  object-position: center 50%;
 }
 
 .photo-color {
@@ -250,6 +250,15 @@ onMounted(() => {
 
   .photo-motion {
     animation: none;
+  }
+
+  /* Desktop framing: keep faces centered better on wide screens. */
+  .photo-layer-bride {
+    object-position: center 45%;
+  }
+
+  .photo-layer-groom {
+    object-position: center 39%;
   }
 }
 </style>

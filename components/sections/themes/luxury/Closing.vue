@@ -1,5 +1,5 @@
 <template>
-  <div class="relative h-screen w-full overflow-hidden">
+  <div class="relative w-full overflow-hidden" style="min-height: calc(100vh - (var(--theme-section-py) * 2));">
     <!-- Background Slideshow -->
     <div
       v-for="(image, index) in gallery"
