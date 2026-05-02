@@ -13,20 +13,22 @@
     <div class="absolute inset-0 bg-black/70 z-10" />
 
     <!-- Content -->
-    <div class="relative z-20 flex h-full flex-col justify-between text-center text-white px-0" data-aos="fade-up">
-      <div class="pt-8">
-        <p class="font-display text-lg tracking-[0.2em] uppercase text-amber-400/80 mb-2">Terimakasih</p>
-        <div
-          v-if="freeTexts && freeTexts.length"
-          class="max-w-xl mx-auto mt-2 text-white/90 leading-relaxed [&_p]:mb-3 [&_p:last-child]:mb-0"
-          v-html="freeTexts[0]"
-        />
-        <p v-else class="max-w-xl mx-auto mt-2 text-base md:text-lg text-white/90 leading-relaxed mb-8">
-          Merupakan suatu kebahagiaan dan kehormatan bagi kami, apabila Bapak/Ibu/Saudara/i, berkenan hadir dan memberikan doa restu kepada kami.
-        </p>
+    <div class="relative z-20 flex h-full flex-col text-center text-white px-6 py-8" data-aos="fade-up">
+      <div class="flex-1 flex items-center justify-center">
+        <div>
+          <p class="font-display text-lg tracking-[0.2em] uppercase text-amber-400/80 mb-2">Terimakasih</p>
+          <div
+            v-if="freeTexts && freeTexts.length"
+            class="max-w-xl mx-auto mt-2 text-white/90 leading-relaxed [&_p]:mb-3 [&_p:last-child]:mb-0"
+            v-html="freeTexts[0]"
+          />
+          <p v-else class="max-w-xl mx-auto mt-2 text-base md:text-lg text-white/90 leading-relaxed mb-8">
+            Merupakan suatu kebahagiaan dan kehormatan bagi kami, apabila Bapak/Ibu/Saudara/i, berkenan hadir dan memberikan doa restu kepada kami.
+          </p>
+        </div>
       </div>
 
-      <div class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50">
+      <div class="shrink-0 pb-2">
         <p class="font-display text-lg tracking-widest text-amber-300/90 mb-2">
           Kami yang berbahagia
         </p>
