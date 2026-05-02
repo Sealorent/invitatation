@@ -1,5 +1,5 @@
 <template>
-  <div class="relative left-1/2 w-screen -translate-x-1/2 overflow-hidden" style="height: calc(100vh - (var(--theme-section-py) * 5));">
+  <div class="relative left-1/2 w-screen -translate-x-1/2 overflow-visible md:overflow-hidden" style="min-height: calc(100vh - (var(--theme-section-py) * 5));">
     <!-- Background Slideshow -->
     <div
       v-for="(image, index) in gallery"
@@ -28,18 +28,18 @@
         </div>
       </div>
 
-      <div class="shrink-0 pb-2">
+      <div class="pb-2">
         <p class="font-display text-lg tracking-widest text-amber-300/90 mb-2">
           Kami yang berbahagia
         </p>
 
-        <h2 class="font-serif text-2xl md:text-2xl text-white mt-2">
+        <h2 class="font-serif text-xl md:text-2xl text-white mt-2">
           {{ invitation.brideName }}
         </h2>
         <h2 class="font-serif text-2xl md:text-2xl text-white mt-1">
           &amp;
         </h2>
-        <h2 class="font-serif text-2xl md:text-2xl text-white mt-1">
+        <h2 class="font-serif text-xl md:text-2xl text-white mt-1">
           {{ invitation.groomName }}
         </h2>
       </div>
