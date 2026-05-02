@@ -489,11 +489,17 @@
             <div class="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center text-rose-600 font-bold text-sm flex-shrink-0">
               {{ w.name.charAt(0).toUpperCase() }}
             </div>
-            <div>
+            <div class="flex-1">
               <p class="text-sm font-medium text-rose-700">{{ w.name }}</p>
               <p class="text-sm text-gray-600">{{ w.message }}</p>
               <p class="text-xs text-gray-400 mt-1">{{ formatDate(w.createdAt) }}</p>
             </div>
+            <button
+              @click="deleteWish(w.id)"
+              class="self-start rounded-lg bg-red-100 px-3 py-1 text-xs font-medium text-red-600 transition hover:bg-red-200"
+            >
+              Delete
+            </button>
           </div>
           <div v-if="!wishes.length" class="text-center text-gray-400 py-8 text-sm">No wishes yet.</div>
         </div>
@@ -790,6 +796,12 @@ async function addMedia() {
 async function deleteGallery(id: string) {
   await $fetch(`/api/gallery/${id}`, { method: 'DELETE' })
   await fetchGallery(galleryPage.value)
+}
+
+async function deleteWish(id: string) {
+  if (!confirm('Delete this wish?')) return
+  await $fetch(`/api/wishes/${id}`, { method: 'DELETE' })
+  wishes.value = wishes.value.filter((wish) => wish.id !== id)
 }
 
 async function addGuest() {
