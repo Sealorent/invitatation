@@ -12,23 +12,19 @@
     <!-- Overlay -->
     <div class="absolute inset-0 bg-black/70 z-10" />
 
-    <!-- Top label (fixed) -->
-    <div class="absolute top-8 left-1/2 -translate-x-1/2 z-30 text-center">
-      <p class="font-display text-lg tracking-[0.2em] uppercase text-amber-400/80 mb-2">Terimakasih</p>
-      <div
-        v-if="freeTexts && freeTexts.length"
-        class="max-w-xl mx-auto mt-2 text-white/90 leading-relaxed [&_p]:mb-3 [&_p:last-child]:mb-0"
-        v-html="freeTexts[0]"
-      />
-    </div>
-
     <!-- Content -->
-    <div class="relative z-20 flex h-full flex-col items-center justify-center pb-24 md:pb-32 text-center text-white px-0" data-aos="fade-up">
-
-     
-      <p v-if="!freeTexts || !freeTexts.length" class="max-w-xl mx-auto text-base md:text-lg text-white/90 leading-relaxed mb-8">
-        Merupakan suatu kebahagiaan dan kehormatan bagi kami, apabila Bapak/Ibu/Saudara/i, berkenan hadir dan memberikan doa restu kepada kami.
-      </p>
+    <div class="relative z-20 flex h-full flex-col justify-between text-center text-white px-0" data-aos="fade-up">
+      <div class="pt-8">
+        <p class="font-display text-lg tracking-[0.2em] uppercase text-amber-400/80 mb-2">Terimakasih</p>
+        <div
+          v-if="freeTexts && freeTexts.length"
+          class="max-w-xl mx-auto mt-2 text-white/90 leading-relaxed [&_p]:mb-3 [&_p:last-child]:mb-0"
+          v-html="freeTexts[0]"
+        />
+        <p v-else class="max-w-xl mx-auto mt-2 text-base md:text-lg text-white/90 leading-relaxed mb-8">
+          Merupakan suatu kebahagiaan dan kehormatan bagi kami, apabila Bapak/Ibu/Saudara/i, berkenan hadir dan memberikan doa restu kepada kami.
+        </p>
+      </div>
 
       <div class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50">
         <p class="font-display text-lg tracking-widest text-amber-300/90 mb-2">
