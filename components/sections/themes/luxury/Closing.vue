@@ -1,5 +1,5 @@
 <template>
-  <div class="relative w-full overflow-hidden" style="height: calc(100vh - (var(--theme-section-py) * 2));">
+  <div class="relative left-1/2 w-screen -translate-x-1/2 overflow-hidden" style="height: calc(100vh - (var(--theme-section-py) * 2));">
     <!-- Background Slideshow -->
     <div
       v-for="(image, index) in gallery"
@@ -23,7 +23,7 @@
     </div>
 
     <!-- Content -->
-    <div class="relative z-20 flex h-full flex-col items-center justify-center pb-24 md:pb-32 text-center text-white px-6" data-aos="fade-up">
+    <div class="relative z-20 flex h-full flex-col items-center justify-center pb-24 md:pb-32 text-center text-white px-0" data-aos="fade-up">
 
      
       <p v-if="!freeTexts || !freeTexts.length" class="max-w-xl mx-auto text-base md:text-lg text-white/90 leading-relaxed mb-8">
@@ -36,7 +36,13 @@
         </p>
 
         <h2 class="font-serif text-2xl md:text-2xl text-white mt-2">
-          {{ invitation.brideName }} & {{ invitation.groomName }}
+          {{ invitation.brideName }}
+        </h2>
+        <h2 class="font-serif text-2xl md:text-2xl text-white mt-1">
+          &amp;
+        </h2>
+        <h2 class="font-serif text-2xl md:text-2xl text-white mt-1">
+          {{ invitation.groomName }}
         </h2>
       </div>
     </div>
