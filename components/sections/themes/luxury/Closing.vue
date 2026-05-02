@@ -1,5 +1,5 @@
 <template>
-  <div class="relative w-full overflow-hidden" style="min-height: calc(100vh - (var(--theme-section-py) * 2));">
+  <div class="relative w-full overflow-hidden" style="height: calc(100vh - (var(--theme-section-py) * 2));">
     <!-- Background Slideshow -->
     <div
       v-for="(image, index) in gallery"
@@ -12,27 +12,33 @@
     <!-- Overlay -->
     <div class="absolute inset-0 bg-black/70 z-10" />
 
-    <!-- Content -->
-    <div class="relative z-20 flex h-full flex-col items-center justify-end pb-24 md:pb-32 text-center text-white px-6" data-aos="fade-up">
-      <p class="font-display text-lg tracking-[0.2em] uppercase text-amber-400/80 mb-4">
-        Terimakasih
-      </p>
-
+    <!-- Top label (fixed) -->
+    <div class="absolute top-8 left-1/2 -translate-x-1/2 z-30 text-center">
+      <p class="font-display text-lg tracking-[0.2em] uppercase text-amber-400/80 mb-2">Terimakasih</p>
       <div
         v-if="freeTexts && freeTexts.length"
-        class="max-w-xl mx-auto mb-8 text-white/90 leading-relaxed [&_p]:mb-3 [&_p:last-child]:mb-0"
+        class="max-w-xl mx-auto mt-2 text-white/90 leading-relaxed [&_p]:mb-3 [&_p:last-child]:mb-0"
         v-html="freeTexts[0]"
       />
-      <p v-else class="max-w-xl mx-auto text-base md:text-lg text-white/90 leading-relaxed mb-8">
+    </div>
+
+    <!-- Content -->
+    <div class="relative z-20 flex h-full flex-col items-center justify-center pb-24 md:pb-32 text-center text-white px-6" data-aos="fade-up">
+
+     
+      <p v-if="!freeTexts || !freeTexts.length" class="max-w-xl mx-auto text-base md:text-lg text-white/90 leading-relaxed mb-8">
         Merupakan suatu kebahagiaan dan kehormatan bagi kami, apabila Bapak/Ibu/Saudara/i, berkenan hadir dan memberikan doa restu kepada kami.
       </p>
 
-      <p class="font-display text-lg tracking-widest text-amber-300/90 mb-2">
-        Kami yang berbahagia
-      </p>
-      <h2 class="font-serif text-2xl md:text-2xl text-white mt-2">
-        {{ invitation.brideName }} & {{ invitation.groomName }}
-      </h2>
+      <div class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50">
+        <p class="font-display text-lg tracking-widest text-amber-300/90 mb-2">
+          Kami yang berbahagia
+        </p>
+
+        <h2 class="font-serif text-2xl md:text-2xl text-white mt-2">
+          {{ invitation.brideName }} & {{ invitation.groomName }}
+        </h2>
+      </div>
     </div>
   </div>
 </template>
