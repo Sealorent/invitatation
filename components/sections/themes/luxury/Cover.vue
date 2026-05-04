@@ -1,7 +1,7 @@
 <template>
   <section
     ref="sectionRef"
-    class="relative min-h-screen flex items-end justify-center overflow-hidden section-enter"
+    class="relative min-h-screen flex items-start justify-center overflow-hidden section-enter"
     :class="{ visible: isVisible }"
   >
     <div class="absolute inset-0 z-0">
@@ -16,13 +16,13 @@
       <div class="absolute inset-0 opacity-35" style="background-image: radial-gradient(circle at 30% 20%, rgba(255,215,120,0.5), transparent 35%), radial-gradient(circle at 75% 80%, rgba(255,235,180,0.38), transparent 40%);" />
     </div>
 
-    <div class="relative z-10 text-center text-white pb-14 sm:pb-16 px-6 max-w-3xl">
+    <div class="absolute inset-0 z-10 flex flex-col justify-between items-center text-center text-white px-6 py-24">
       <div v-if="guestName" class="mb-6 sm:mb-8 animate-fade-in">
         <p class="text-[11px] uppercase tracking-[0.32em] text-amber-100 mb-1">Kepada Yth :</p>
         <p class="text-[11px] uppercase tracking-[0.32em] text-amber-100 mb-1">Bapak/Ibu/Saudara/i</p>
         <p class="font-script text-2xl sm:text-3xl text-amber-50">{{ guestName }}</p>
       </div>
-
+      <div class="flex flex-col items-center max-w-3xl pb-14 sm:pb-16">
       <p class="text-[11px] sm:text-xs uppercase tracking-[0.35em] text-amber-100 mb-4 sm:mb-5 animate-fade-in">
         We invite you to celebrate the marriage of
       </p>
@@ -54,6 +54,7 @@
 
       <div v-if="opened" class="animate-bounce mt-4">
         <p class="text-amber-100 text-sm">Scroll to explore ↓</p>
+      </div>
       </div>
     </div>
   </section>
