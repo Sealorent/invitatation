@@ -28,11 +28,11 @@
       </p>
 
       <div class="animate-slide-up">
-        <h1 class="font-script text-4xl sm:text-4xl md:text-8xl text-amber-50 leading-tight mb-1">
+        <h1 class="font-script text-4xl sm:text-3xl md:text-4xl text-amber-50 leading-tight mb-1">
           {{ invitation.brideName }}
         </h1>
         <p class="font-elegant text-2xl text-yellow-200 mb-1">&</p>
-        <h1 class="font-script text-4xl sm:text-4xl md:text-8xl text-amber-50 leading-tight mb-5 sm:mb-6">
+        <h1 class="font-script text-4xl sm:text-3xl md:text-4xl text-amber-50 leading-tight mb-5 sm:mb-6">
           {{ invitation.groomName }}
         </h1>
       </div>
