@@ -16,8 +16,8 @@
       <div class="absolute inset-0 opacity-35" style="background-image: radial-gradient(circle at 30% 20%, rgba(255,215,120,0.5), transparent 35%), radial-gradient(circle at 75% 80%, rgba(255,235,180,0.38), transparent 40%);" />
     </div>
 
-    <div class="absolute inset-0 z-10 flex flex-col justify-between items-center text-center text-white px-6 py-24">
-      <div v-if="guestName" class="mb-6 sm:mb-8 animate-fade-in">
+    <div class="absolute inset-0 z-10 flex flex-col justify-between items-center text-center text-white px-6 py-12">
+      <div v-if="guestName" class="mb-20 sm:mb-8 animate-fade-in">
         <p class="text-[11px] uppercase tracking-[0.32em] text-amber-100 mb-1">Kepada Yth :</p>
         <p class="text-[11px] uppercase tracking-[0.32em] text-amber-100 mb-1">Bapak/Ibu/Saudara/i</p>
         <p class="font-script text-2xl sm:text-3xl text-amber-50">{{ guestName }}</p>
@@ -28,11 +28,11 @@
       </p>
 
       <div class="animate-slide-up">
-        <h1 class="font-script text-4xl sm:text-3xl md:text-4xl text-amber-50 leading-tight mb-1">
+        <h1 class="font-script text-2xl sm:text-xl md:text-4xl text-amber-50 leading-tight mb-1">
           {{ invitation.brideName }}
         </h1>
         <p class="font-elegant text-2xl text-yellow-200 mb-1">&</p>
-        <h1 class="font-script text-4xl sm:text-3xl md:text-4xl text-amber-50 leading-tight mb-5 sm:mb-6">
+        <h1 class="font-script text-2xl sm:text-xl md:text-4xl text-amber-50 leading-tight mb-5 sm:mb-6">
           {{ invitation.groomName }}
         </h1>
       </div>

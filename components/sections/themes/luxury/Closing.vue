@@ -28,8 +28,8 @@
         </div>
       </div>
 
-      <div class="pb-2">
-        <p class="font-display text-lg tracking-widest text-amber-300/90 mb-2">
+      <div class="pb-2 mt-20">
+        <p class="font-display text-lg text-amber-300/90 mb-2">
           Kami yang berbahagia
         </p>
 
