@@ -261,6 +261,13 @@ const enabledSections = computed(() => {
     return []
   }
 
+  console.table(invitation.value.sections.map((s: SectionRecord) => ({
+    id: s.id,
+    type: s.type,
+    enabled: s.enabled,
+    title: s.title
+  })), ['id', 'type', 'enabled', 'title'])
+
   const dedupedByType = new Map<string, SectionRecord>()
   for (const section of invitation.value.sections as SectionRecord[]) {
     if (!section?.type || !section.enabled) continue
@@ -701,17 +708,38 @@ watch(activeYoutubeMusicEmbedUrl, (url) => {
   console.log('[music] youtube embed url updated', url || '(empty)')
 })
 
-useHead(() => ({
-  title: invitation.value
-    ? `${invitation.value.brideName} & ${invitation.value.groomName} Wedding`
-    : 'Wedding Invitation',
-  meta: [
-    { name: 'description', content: `You are invited to the wedding of ${invitation.value?.brideName} & ${invitation.value?.groomName}` },
-    { property: 'og:title', content: `${invitation.value?.brideName} & ${invitation.value?.groomName} Wedding Invitation` },
-    { property: 'og:image', content: (invitation.value?.coverPhoto as string) || '' },
-  ],
-  link: [
-    { id: 'invitation-theme-style', rel: 'stylesheet', href: themeStylesheetHref.value }
-  ]
-}))
+useHead(() => {
+  const ogImage = (invitation.value?.coverPhoto as string) || ''
+  const ogImageUrl = invitation.value?.slug
+    ? `https://invitation.sealorent.site/api/og/${invitation.value.slug}`
+    : ogImage
+  
+  // Debug logging
+  console.log('[OG Meta] Generating head tags', {
+    brideName: invitation.value?.brideName,
+    groomName: invitation.value?.groomName,
+    coverPhoto: ogImage,
+    ogImageUrl,
+    slug: slug.value,
+    fullUrl: `https://invitation.sealorent.site/${slug.value}`
+  })
+  
+  return {
+    title: invitation.value
+      ? `${invitation.value.brideName} & ${invitation.value.groomName} Wedding`
+      : 'Wedding Invitation',
+    meta: [
+      { name: 'description', content: `You are invited to the wedding of ${invitation.value?.brideName} & ${invitation.value?.groomName}` },
+      { property: 'og:title', content: `${invitation.value?.brideName} & ${invitation.value?.groomName} Wedding Invitation` },
+      { property: 'og:image', content: ogImageUrl },
+      { property: 'og:image:type', content: 'image/jpeg' },
+      { property: 'og:image:width', content: '1200' },
+      { property: 'og:image:height', content: '630' },
+      { property: 'og:url', content: `https://invitation.sealorent.site/${slug.value}` },
+    ],
+    link: [
+      { id: 'invitation-theme-style', rel: 'stylesheet', href: themeStylesheetHref.value }
+    ]
+  }
+})
 </script>
